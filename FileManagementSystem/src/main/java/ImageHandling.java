@@ -33,19 +33,24 @@ public class ImageHandling{
 	
 	
 	int type = BufferedImage.TYPE_INT_ARGB;
-	BufferedImage img = ImageIO.read(new File(src));
-	if (img.getWidth() < MainImage.getWidth()/1.5 && img.getHeight() <MainImage.getHeight()/1.5){
-	    MainImage.setIcon(new ImageIcon(img));
+	if(new File(src).isDirectory()){
+	    
 	}else{
-	    MainImage.setIcon(new ImageIcon(img.getScaledInstance(MainImage.getWidth(), MainImage.getHeight(),
-        Image.SCALE_SMOOTH)));
+	    BufferedImage img = ImageIO.read(new File(src));
+	    if (img.getWidth() < MainImage.getWidth()/1.5 && img.getHeight() <MainImage.getHeight()/1.5){
+		MainImage.setIcon(new ImageIcon(img));
+	    }else{
+		MainImage.setIcon(new ImageIcon(img.getScaledInstance(MainImage.getWidth(), MainImage.getHeight(),
+	    Image.SCALE_SMOOTH)));
+	    }
 	}
+	
     }
 
-    public void handler(JList<String> MainFileList, JLabel MainImage, JFileChooser mainFileChooser){
+    public void handler(String src, JLabel MainImage){
 	
 	try {
-	    setImage(mainFileChooser.getCurrentDirectory()+"\\"+MainFileList.getSelectedValue(), MainImage);
+	    setImage(src, MainImage);
 	} catch (IOException ex) {
 	    Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 	} catch (InterruptedException ex) {

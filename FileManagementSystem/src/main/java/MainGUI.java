@@ -104,9 +104,9 @@ public class MainGUI extends JFrame {
                         .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(99, 99, 99)
+                .addGap(39, 39, 39)
                 .addComponent(ImageHolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,8 +161,9 @@ public class MainGUI extends JFrame {
         //System.out.println(evt.getPath());
 	StringBuilder finalPath = new StringBuilder();
 	System.out.println(currentDirectory);
+	System.out.println(evt.getPath());
 	finalPath.append(currentDirectory);
-	for(int pathIndex = 0; pathIndex<evt.getPath().getPathCount(); pathIndex++){
+	for(int pathIndex = 1; pathIndex<evt.getPath().getPathCount(); pathIndex++){
 	    if(evt.getPath().getPathComponent(pathIndex).toString().contains(":\\")){
 		finalPath.deleteCharAt(finalPath.length()-1);
 		continue;
@@ -172,6 +173,7 @@ public class MainGUI extends JFrame {
 	    }
 	}
 	System.out.println(finalPath.toString());
+	imageHandler.handler(finalPath.toString(), MainImage);
     }//GEN-LAST:event_MainFileListValueChanged
 
 
