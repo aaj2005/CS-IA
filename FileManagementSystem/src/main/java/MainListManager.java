@@ -14,16 +14,18 @@ import java.io.IOException;
 ///*import java.util.Enumeration;
 //import java.util.zip.ZipEntry;
 //import java.util.zip.ZipFile;*/
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import org.apache.commons.io.FilenameUtils;
 
 
 public class MainListManager extends MainGUI{
-    private MainGUI mainClass = new MainGUI();
-    DefaultListModel model;
-
+    DefaultTreeModel model;
+    DefaultMutableTreeNode placeHolderNode;
     public MainListManager() {        
         
     }
@@ -31,12 +33,13 @@ public class MainListManager extends MainGUI{
 
        
 
-    public void addItemsToMainList(JList<String> MainFileList, ActionEvent evt){
+    public void addItemsToMainList(JTree MainFileList, ActionEvent evt){
 	if (evt.getActionCommand() == "ApproveSelection") {
             
             MainDirectorySearch = (JFileChooser) evt.getSource();
             System.out.println(MainDirectorySearch.getSelectedFile());
             MainDirectorySearch.setCurrentDirectory(MainDirectorySearch.getSelectedFile());
+	    currentDirectory = MainDirectorySearch.getSelectedFile();
             MainListManager add = new MainListManager();
 
             try{
@@ -49,18 +52,21 @@ public class MainListManager extends MainGUI{
     }
     
     
-    public DefaultListModel retrieveFileNames(File path, JList<String> MainFileList) throws IOException{
+    public DefaultTreeModel retrieveFileNames(File path, JTree MainFileList) throws IOException{
             
             
             
-            MainFileList.setModel(new DefaultListModel());   
-            model = (DefaultListModel) MainFileList.getModel();
             
-            getFileNames(path);
-            MainFileList = new JList(model);
-            return model;
+            model = (DefaultTreeModel) MainFileList.getModel();
+	    //parentFile.add(new DefaultMutableTreeNode(path.getName()));
+	    model.setRoot(new DefaultMutableTreeNode(path.getName()));
+            getFileNames(path, (DefaultMutableTreeNode)model.getRoot());
+            MainFileList = new JTree(model);
+            model.reload();
+	    return model;
     }
-    public File getFileNames(File folder) throws IOException {
+    
+    public File getFileNames(File folder, DefaultMutableTreeNode rootNode) throws IOException {
 
         File[] fileList = folder.listFiles();
         if (fileList == null) {
@@ -70,13 +76,22 @@ public class MainListManager extends MainGUI{
             for (final File file : fileList ) {
                 //Path path = Paths.get(file.toString());
                 //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-                if(/*videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ||*/ imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-                    model.addElement(file.getName());
+                
+		if(/*videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ||*/ imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+                    rootNode.add(new DefaultMutableTreeNode(file.getName()));
+		    
+		    
                 }else if(zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-                }else{
+                
+		}else if(file.isDirectory() && file.length()>0){
+		    rootNode.add(new DefaultMutableTreeNode(file.getName()));
                     File subFiles = new File(file.toString());
-                    getFileNames(subFiles);
+                    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
+		    if(rootNode.getLastChild().getChildCount()<=0){
+			rootNode.remove(rootNode.getChildCount()-1);
+		    }
                 }
+		model.reload(rootNode);
             }
 	}catch(IOException e){
 	    System.out.println(e);

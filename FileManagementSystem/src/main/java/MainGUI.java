@@ -1,27 +1,10 @@
-import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.TreeSelectionModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -52,22 +35,14 @@ public class MainGUI extends JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        MainFileListScroll = new javax.swing.JScrollPane();
-        MainFileList = new javax.swing.JList<>();
         VisibleFilesTitle = new java.awt.Label();
         ImageHolderPanel = new java.awt.Panel();
         MainImage = new javax.swing.JLabel();
         MainDirectorySearch = new javax.swing.JFileChooser();
+        MainFileListScroll = new javax.swing.JScrollPane();
+        MainFileList = new javax.swing.JTree();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        MainFileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        MainFileList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                MainFileListValueChanged(evt);
-            }
-        });
-        MainFileListScroll.setViewportView(MainFileList);
 
         VisibleFilesTitle.setAlignment(java.awt.Label.CENTER);
         VisibleFilesTitle.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
@@ -105,6 +80,18 @@ public class MainGUI extends JFrame {
             }
         });
 
+        MainFileListScroll.setMinimumSize(new java.awt.Dimension(0, 0));
+        MainFileListScroll.setPreferredSize(new java.awt.Dimension(1526, 998));
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Files");
+        MainFileList.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        MainFileList.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                MainFileListValueChanged(evt);
+            }
+        });
+        MainFileListScroll.setViewportView(MainFileList);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -112,10 +99,10 @@ public class MainGUI extends JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(VisibleFilesTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(MainFileListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(99, 99, 99)
                 .addComponent(ImageHolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -125,13 +112,16 @@ public class MainGUI extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(VisibleFilesTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(ImageHolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(256, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(ImageHolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(333, 333, 333))
         );
 
         pack();
@@ -142,7 +132,7 @@ public class MainGUI extends JFrame {
     public final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","flv","vob","ogv","ogg","drc","gif","gifv","mng","avi","MTS","M2TS","TS","mov","qt","wmv","yuv","rm","rmvb","viv","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe","mpv","mpg","mpeg","m2v","m4v","svi","3gp","3g2","mxf","roq","nsv", "flv","f4v","f4p","f4a","f4b"));
     public final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi","png","gif","webp","tiff","tif","raw","arw","cr2","nrw","psd","k25","bmp","dib","heif","heic","indd","ind","indt","jp2","j2k","jpf","jpx","jpm","mj2","svg","svgz","ai","eps"));
     public final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
-
+    public static File currentDirectory;
     
     
     public MainGUI() {
@@ -151,7 +141,8 @@ public class MainGUI extends JFrame {
 	initComponents();
 	//panel1.setLayout(new BorderLayout());
 	
-	
+	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 	
@@ -166,16 +157,23 @@ public class MainGUI extends JFrame {
 	listManagerClass.addItemsToMainList(MainFileList, evt);        
     }//GEN-LAST:event_MainDirectorySearchActionPerformed
 
-    private void MainFileListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_MainFileListValueChanged
-	
-	imageHandler.handler(MainFileList, MainImage, MainDirectorySearch);
-	
-	
+    private void MainFileListValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_MainFileListValueChanged
+        //System.out.println(evt.getPath());
+	StringBuilder finalPath = new StringBuilder();
+	System.out.println(currentDirectory);
+	finalPath.append(currentDirectory);
+	for(int pathIndex = 0; pathIndex<evt.getPath().getPathCount(); pathIndex++){
+	    if(evt.getPath().getPathComponent(pathIndex).toString().contains(":\\")){
+		finalPath.deleteCharAt(finalPath.length()-1);
+		continue;
+	    }else{
+		finalPath.append("\\");
+		finalPath.append(evt.getPath().getPathComponent(pathIndex).toString());
+	    }
+	}
+	System.out.println(finalPath.toString());
     }//GEN-LAST:event_MainFileListValueChanged
-    
-    public JList getJList1(){
-        return MainFileList;
-    }
+
 
     /**
      * @param args the command line arguments
@@ -220,7 +218,7 @@ public class MainGUI extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Panel ImageHolderPanel;
     public javax.swing.JFileChooser MainDirectorySearch;
-    private javax.swing.JList<String> MainFileList;
+    private javax.swing.JTree MainFileList;
     private javax.swing.JScrollPane MainFileListScroll;
     private javax.swing.JLabel MainImage;
     private java.awt.Label VisibleFilesTitle;
