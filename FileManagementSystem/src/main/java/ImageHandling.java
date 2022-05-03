@@ -7,11 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -34,8 +31,8 @@ public class ImageHandling{
 	
 	int type = BufferedImage.TYPE_INT_ARGB;
 	if(new File(src).isDirectory()){
-	    
-	}else{
+
+	}else {
 	    BufferedImage img = ImageIO.read(new File(src));
 	    if (img.getWidth() < MainImage.getWidth()/1.5 && img.getHeight() <MainImage.getHeight()/1.5){
 		MainImage.setIcon(new ImageIcon(img));

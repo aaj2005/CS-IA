@@ -37,7 +37,7 @@ public class MainListManager extends MainGUI{
 	if (evt.getActionCommand() == "ApproveSelection") {
             
             MainDirectorySearch = (JFileChooser) evt.getSource();
-            System.out.println(MainDirectorySearch.getSelectedFile());
+            //System.out.println(MainDirectorySearch.getSelectedFile());
             MainDirectorySearch.setCurrentDirectory(MainDirectorySearch.getSelectedFile());
 	    currentDirectory = MainDirectorySearch.getSelectedFile();
             MainListManager add = new MainListManager();
@@ -76,7 +76,6 @@ public class MainListManager extends MainGUI{
             for (final File file : fileList ) {
                 //Path path = Paths.get(file.toString());
                 //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-                
 		if(/*videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ||*/ imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
                     rootNode.add(new DefaultMutableTreeNode(file.getName()));
 		    
