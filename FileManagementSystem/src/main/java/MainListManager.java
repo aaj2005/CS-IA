@@ -76,11 +76,13 @@ public class MainListManager extends MainGUI{
             for (final File file : fileList ) {
                 //Path path = Paths.get(file.toString());
                 //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-		if(/*videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ||*/ imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+		if(imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
                     rootNode.add(new DefaultMutableTreeNode(file.getName()));
 		    
 		    
-                }else if(zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+                }else if(videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ){
+		    rootNode.add(new DefaultMutableTreeNode(file.getName()));
+		}else if(zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
                 
 		}else if(file.isDirectory() && file.length()>0){
 		    rootNode.add(new DefaultMutableTreeNode(file.getName()));

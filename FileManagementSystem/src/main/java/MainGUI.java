@@ -1,8 +1,11 @@
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JFrame;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
@@ -151,7 +154,7 @@ public class MainGUI extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     
- /*   ImageHandling imageHandler = new ImageHandling();
+    ImageHandling imageHandler = new ImageHandling();
     public final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","flv","vob","ogv","ogg","drc","gif","gifv","mng","avi","MTS","M2TS","TS","mov","qt","wmv","yuv","rm","rmvb","viv","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe","mpv","mpg","mpeg","m2v","m4v","svi","3gp","3g2","mxf","roq","nsv", "flv","f4v","f4p","f4a","f4b"));
     public final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi","png","gif","webp","tiff","tif","raw","arw","cr2","nrw","psd","k25","bmp","dib","heif","heic","indd","ind","indt","jp2","j2k","jpf","jpx","jpm","mj2","svg","svgz","ai","eps"));
     public final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
@@ -177,6 +180,7 @@ public class MainGUI extends JFrame {
     
     private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MainDirectorySearchActionPerformed
 	MainListManager listManagerClass = new MainListManager();
+	
 	MainImage.setIcon(null);
 	fileName.setText(null);
 	
@@ -186,9 +190,10 @@ public class MainGUI extends JFrame {
     }//GEN-LAST:event_MainDirectorySearchActionPerformed
 
     private void MainFileListValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_MainFileListValueChanged
-        //System.out.println(evt.getPath());
-	
-	    imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
+        
+	//System.out.println(evt.getPath());
+	fileName.setText(getFileNameWithoutExtension(evt.getPath()));
+	imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
 	
 	    
 	
@@ -196,19 +201,41 @@ public class MainGUI extends JFrame {
     }//GEN-LAST:event_MainFileListValueChanged
 
     private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyButtonActionPerformed
-        if(!"null".equals(MainFileList.getSelectionPath().toString())){
-	    fileName.getText();
+        
+	if(!"null".equals(MainFileList.getSelectionPath().toString())){
+	    //System.out.println(fileName.getText());
 	    File originalFile = new File(treePathCombiner(MainFileList.getSelectionPath(),0));
-	    System.out.println(treePathCombiner(MainFileList.getSelectionPath(),1)+"\\"+fileName.getText()+"."+FilenameUtils.getExtension(originalFile.toString()));
-	    //File renamedFile = new File();
+	    System.out.println();
+	    TreePath oldPath = MainFileList.getSelectionPath();
+	    String newFileName = treePathCombiner(MainFileList.getSelectionPath(),1)+"\\"+fileName.getText()+"."+FilenameUtils.getExtension(originalFile.toString());
+	    File renamedFile = new File(newFileName);
+	    
+	    
+	    
+	    
+	    boolean flag = originalFile.renameTo(renamedFile);
+	    if (flag == true) {
+		DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel();
+		DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList.getSelectionPath().getPath()[MainFileList.getSelectionPath().getPath().length-1];
+		childNode.setUserObject(fileName.getText()+"."+FilenameUtils.getExtension(originalFile.toString()));
+		model.nodeChanged(childNode);
+		MainFileList.setModel(model);
+		MainFileList.setSelectionPath(oldPath);
+	    }
+	    
+	    
+	    
+	    
+	    
 	}
 	
     }//GEN-LAST:event_ApplyButtonActionPerformed
 
+    
     private String treePathCombiner(TreePath treePath, int endIndexRemover){
 	StringBuilder finalPath = new StringBuilder();
 	finalPath.append(currentDirectory);
-	System.out.println(treePath);
+	//System.out.println(treePath);
 	for(int pathIndex = 1; pathIndex<treePath.getPathCount()-endIndexRemover; pathIndex++){
 	    if(treePath.getPathComponent(pathIndex).toString().contains(":\\")){
 		finalPath.deleteCharAt(finalPath.length()-1);
@@ -216,130 +243,14 @@ public class MainGUI extends JFrame {
 		finalPath.append("\\");
 		finalPath.append(treePath.getPathComponent(pathIndex).toString());
 	    }
-	}
-	String filename=treePath.getPathComponent(treePath.getPathCount()-1).toString();
-	fileName.setText(filename.replaceAll("."+FilenameUtils.getExtension(filename), ""));
+	}	
 	return finalPath.toString();
     }
-    /**
-     * @param args the command line arguments
-     
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form 
-	
-        java.awt.EventQueue.invokeLater(new Runnable(){
-	    public void run(){
-		MainGUI mainGUI = new MainGUI();
-		mainGUI.pack();
-
-		mainGUI.setVisible(true);
-	    }
-	});
-    }
-    */
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton ApplyButton;
-    private java.awt.Panel ImageHolderPanel;
-    public javax.swing.JFileChooser MainDirectorySearch;
-    private javax.swing.JTree MainFileList;
-    private javax.swing.JScrollPane MainFileListScroll;
-    private javax.swing.JLabel MainImage;
-    private java.awt.Label VisibleFilesTitle;
-    private javax.swing.JTextField fileName;
-    // End of variables declaration//GEN-END:variables
-    ImageHandling imageHandler = new ImageHandling();
-    public final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","flv","vob","ogv","ogg","drc","gif","gifv","mng","avi","MTS","M2TS","TS","mov","qt","wmv","yuv","rm","rmvb","viv","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe","mpv","mpg","mpeg","m2v","m4v","svi","3gp","3g2","mxf","roq","nsv", "flv","f4v","f4p","f4a","f4b"));
-    public final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi","png","gif","webp","tiff","tif","raw","arw","cr2","nrw","psd","k25","bmp","dib","heif","heic","indd","ind","indt","jp2","j2k","jpf","jpx","jpm","mj2","svg","svgz","ai","eps"));
-    public final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
-    public static File currentDirectory;
     
-    
-    public MainGUI() {
-	setSize(new Dimension(1920,1080));
-	
-	initComponents();
-	//panel1.setLayout(new BorderLayout());
-	
-	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-	setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-	
-	
-        
-	
-    }
-    
-    
-    private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {                                                    
-	MainListManager listManagerClass = new MainListManager();
-	MainImage.setIcon(null);
-	fileName.setText(null);
-	
-	listManagerClass.addItemsToMainList(MainFileList, evt);
-	MainFileList.clearSelection();
-	MainFileList.repaint();
-    }                                                   
-
-    private void MainFileListValueChanged(javax.swing.event.TreeSelectionEvent evt) {                                          
-        //System.out.println(evt.getPath());
-	
-	    imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
-	
-	    
-	
-	
-    }                                         
-
-    private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        if(!"null".equals(MainFileList.getSelectionPath().toString())){
-	    fileName.getText();
-	    File originalFile = new File(treePathCombiner(MainFileList.getSelectionPath(),0));
-	    System.out.println(treePathCombiner(MainFileList.getSelectionPath(),1)+"\\"+fileName.getText()+"."+FilenameUtils.getExtension(originalFile.toString()));
-	    //File renamedFile = new File();
-	}
-	
-    }                                           
-
-    private String treePathCombiner(TreePath treePath, int endIndexRemover){
-	StringBuilder finalPath = new StringBuilder();
-	finalPath.append(currentDirectory);
-	System.out.println(treePath);
-	for(int pathIndex = 1; pathIndex<treePath.getPathCount()-endIndexRemover; pathIndex++){
-	    if(treePath.getPathComponent(pathIndex).toString().contains(":\\")){
-		finalPath.deleteCharAt(finalPath.length()-1);
-	    }else{
-		finalPath.append("\\");
-		finalPath.append(treePath.getPathComponent(pathIndex).toString());
-	    }
-	}
+    private String getFileNameWithoutExtension(TreePath treePath){
 	String filename=treePath.getPathComponent(treePath.getPathCount()-1).toString();
-	fileName.setText(filename.replaceAll("."+FilenameUtils.getExtension(filename), ""));
-	return finalPath.toString();
+	filename = filename.replaceAll("."+FilenameUtils.getExtension(filename), "");
+	return filename;
     }
     /**
      * @param args the command line arguments
@@ -380,4 +291,16 @@ public class MainGUI extends JFrame {
 	    }
 	});
     }
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ApplyButton;
+    private java.awt.Panel ImageHolderPanel;
+    public javax.swing.JFileChooser MainDirectorySearch;
+    private javax.swing.JTree MainFileList;
+    private javax.swing.JScrollPane MainFileListScroll;
+    private javax.swing.JLabel MainImage;
+    private java.awt.Label VisibleFilesTitle;
+    private javax.swing.JTextField fileName;
+    // End of variables declaration//GEN-END:variables
+    
 }
