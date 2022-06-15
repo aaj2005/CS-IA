@@ -1,3 +1,5 @@
+import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -9,6 +11,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -47,6 +50,7 @@ public class MainGUI extends JFrame {
         MainFileList = new javax.swing.JTree();
         fileName = new javax.swing.JTextField();
         ApplyButton = new javax.swing.JButton();
+        canvas2 = new java.awt.Canvas();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -54,7 +58,7 @@ public class MainGUI extends JFrame {
         VisibleFilesTitle.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
         VisibleFilesTitle.setText("Visible Files");
 
-        ImageHolderPanel.setBackground(new java.awt.Color(0, 0, 0));
+        ImageHolderPanel.setBackground(new java.awt.Color(255, 0, 51));
         ImageHolderPanel.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
         ImageHolderPanel.setPreferredSize(new java.awt.Dimension(590, 520));
 
@@ -119,7 +123,11 @@ public class MainGUI extends JFrame {
                         .addGap(41, 41, 41)
                         .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(canvas2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(126, 126, 126)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ImageHolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -146,14 +154,16 @@ public class MainGUI extends JFrame {
                             .addComponent(ApplyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(40, 40, 40)
-                        .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(canvas2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(333, 333, 333))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    
+    static VideoHandling x;
     ImageHandling imageHandler = new ImageHandling();
     public final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","flv","vob","ogv","ogg","drc","gif","gifv","mng","avi","MTS","M2TS","TS","mov","qt","wmv","yuv","rm","rmvb","viv","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe","mpv","mpg","mpeg","m2v","m4v","svi","3gp","3g2","mxf","roq","nsv", "flv","f4v","f4p","f4a","f4b"));
     public final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi","png","gif","webp","tiff","tif","raw","arw","cr2","nrw","psd","k25","bmp","dib","heif","heic","indd","ind","indt","jp2","j2k","jpf","jpx","jpm","mj2","svg","svgz","ai","eps"));
@@ -162,15 +172,31 @@ public class MainGUI extends JFrame {
     
     
     public MainGUI() {
+	System.out.println(System.getProperty("sun.arch.data.model"));
+
 	setSize(new Dimension(1920,1080));
 	
 	initComponents();
+	setLayout(new BorderLayout());
+	MainImage.setVisible(false);
 	//panel1.setLayout(new BorderLayout());
 	
 	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
+	EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+	ImageHolderPanel.removeAll();
+	ImageHolderPanel.setLayout(new BorderLayout());
+	ImageHolderPanel.add(mediaPlayerComponent, BorderLayout.CENTER);
+	
+	
+	//add(ImageHolderPanel);
+        //setSize(1300, 800);
+	
+	
+	//add(videoSurface);
+	mediaPlayerComponent.mediaPlayer().media().play("D:\\Downloads\\template video.mp4");
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
-
+	
+	
 	
 	
         
@@ -181,12 +207,18 @@ public class MainGUI extends JFrame {
     private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MainDirectorySearchActionPerformed
 	MainListManager listManagerClass = new MainListManager();
 	
-	MainImage.setIcon(null);
-	fileName.setText(null);
+
+	//x.play();
+	//Canvas videoSurface = new Canvas();
+	
+	
+	//MainImage.setIcon(null);
+	//fileName.setText(null);
 	
 	listManagerClass.addItemsToMainList(MainFileList, evt);
 	MainFileList.clearSelection();
 	MainFileList.repaint();
+	
     }//GEN-LAST:event_MainDirectorySearchActionPerformed
 
     private void MainFileListValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_MainFileListValueChanged
@@ -205,7 +237,7 @@ public class MainGUI extends JFrame {
 	if(!"null".equals(MainFileList.getSelectionPath().toString())){
 	    //System.out.println(fileName.getText());
 	    File originalFile = new File(treePathCombiner(MainFileList.getSelectionPath(),0));
-	    System.out.println();
+	    
 	    TreePath oldPath = MainFileList.getSelectionPath();
 	    String newFileName = treePathCombiner(MainFileList.getSelectionPath(),1)+"\\"+fileName.getText()+"."+FilenameUtils.getExtension(originalFile.toString());
 	    File renamedFile = new File(newFileName);
@@ -221,6 +253,8 @@ public class MainGUI extends JFrame {
 		model.nodeChanged(childNode);
 		MainFileList.setModel(model);
 		MainFileList.setSelectionPath(oldPath);
+	    }else{
+		System.out.println("exists");
 	    }
 	    
 	    
@@ -286,7 +320,8 @@ public class MainGUI extends JFrame {
 	    public void run(){
 		MainGUI mainGUI = new MainGUI();
 		mainGUI.pack();
-
+		x = new VideoHandling();
+		x.run();
 		mainGUI.setVisible(true);
 	    }
 	});
@@ -294,12 +329,13 @@ public class MainGUI extends JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ApplyButton;
-    private java.awt.Panel ImageHolderPanel;
+    public static java.awt.Panel ImageHolderPanel;
     public javax.swing.JFileChooser MainDirectorySearch;
     private javax.swing.JTree MainFileList;
     private javax.swing.JScrollPane MainFileListScroll;
-    private javax.swing.JLabel MainImage;
+    public static javax.swing.JLabel MainImage;
     private java.awt.Label VisibleFilesTitle;
+    public static java.awt.Canvas canvas2;
     private javax.swing.JTextField fileName;
     // End of variables declaration//GEN-END:variables
     

@@ -84,12 +84,13 @@ public class MainListManager extends MainGUI{
 		    rootNode.add(new DefaultMutableTreeNode(file.getName()));
 		}else if(zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
                 
-		}else if(file.isDirectory() && file.length()>0){
+		}else if(file.isDirectory() && file.list().length>0){
 		    rootNode.add(new DefaultMutableTreeNode(file.getName()));
+		    
                     File subFiles = new File(file.toString());
                     getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
 		    if(rootNode.getLastChild().getChildCount()<=0){
-			rootNode.remove(rootNode.getChildCount()-1);
+		    	rootNode.remove(rootNode.getChildCount()-1);
 		    }
                 }
 		model.reload(rootNode);
