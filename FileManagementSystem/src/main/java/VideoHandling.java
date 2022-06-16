@@ -19,24 +19,7 @@ import uk.co.caprica.vlcj.log.LogLevel;
 public class VideoHandling extends MainGUI implements LogEventListener {
     EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
     
-    public void run(){
-	
-	    
-	
-	
-	
-	
-	
-	
-	
-    }
-    public void play(){
-	
-	
-	
-	//pack();
-    
-    
+    public void run(String path){
 	
     }
     @Override

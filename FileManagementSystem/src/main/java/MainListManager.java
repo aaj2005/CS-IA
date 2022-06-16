@@ -15,15 +15,13 @@ import java.io.IOException;
 //import java.util.zip.ZipEntry;
 //import java.util.zip.ZipFile;*/
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import org.apache.commons.io.FilenameUtils;
 
 
-public class MainListManager extends MainGUI{
+public class MainListManager{
     DefaultTreeModel model;
     DefaultMutableTreeNode placeHolderNode;
     public MainListManager() {        
@@ -33,21 +31,16 @@ public class MainListManager extends MainGUI{
 
        
 
-    public void addItemsToMainList(JTree MainFileList, ActionEvent evt){
-	if (evt.getActionCommand() == "ApproveSelection") {
+    public void addItemsToMainList(JTree MainFileList, ActionEvent evt) throws IOException{
+	if ("ApproveSelection".equals(evt.getActionCommand())) {
             
-            MainDirectorySearch = (JFileChooser) evt.getSource();
+            MainGUI.MainDirectorySearch = (JFileChooser) evt.getSource();
             //System.out.println(MainDirectorySearch.getSelectedFile());
-            MainDirectorySearch.setCurrentDirectory(MainDirectorySearch.getSelectedFile());
-	    currentDirectory = MainDirectorySearch.getSelectedFile();
+            MainGUI.MainDirectorySearch.setCurrentDirectory(MainGUI.MainDirectorySearch.getSelectedFile());
+	    MainGUI.currentDirectory = MainGUI.MainDirectorySearch.getSelectedFile();
             MainListManager add = new MainListManager();
 
-            try{
-
-                MainFileList.setModel(add.retrieveFileNames(MainDirectorySearch.getSelectedFile(),MainFileList));
-            }catch(IOException e){
-                System.out.println(e);
-            }
+	    MainFileList.setModel(add.retrieveFileNames(MainGUI.MainDirectorySearch.getSelectedFile(),MainFileList));
         }
     }
     
@@ -76,13 +69,13 @@ public class MainListManager extends MainGUI{
             for (final File file : fileList ) {
                 //Path path = Paths.get(file.toString());
                 //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-		if(imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+		if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
                     rootNode.add(new DefaultMutableTreeNode(file.getName()));
 		    
 		    
-                }else if(videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ){
+                }else if(MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ){
 		    rootNode.add(new DefaultMutableTreeNode(file.getName()));
-		}else if(zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+		}else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
                 
 		}else if(file.isDirectory() && file.list().length>0){
 		    rootNode.add(new DefaultMutableTreeNode(file.getName()));

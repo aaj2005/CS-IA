@@ -3,8 +3,12 @@ import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -57,7 +61,7 @@ public class MainGUI extends JFrame {
         VisibleFilesTitle.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
         VisibleFilesTitle.setText("Visible Files");
 
-        ImageHolderPanel.setBackground(new java.awt.Color(255, 0, 51));
+        ImageHolderPanel.setBackground(new java.awt.Color(0, 0, 0));
         ImageHolderPanel.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
         ImageHolderPanel.setPreferredSize(new java.awt.Dimension(590, 520));
 
@@ -131,7 +135,7 @@ public class MainGUI extends JFrame {
                         .addGap(28, 28, 28)
                         .addComponent(ApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(308, 308, 308)))
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap(131, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,9 +162,9 @@ public class MainGUI extends JFrame {
     
     static VideoHandling x;
     ImageHandling imageHandler = new ImageHandling();
-    public final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","flv","vob","ogv","ogg","drc","gif","gifv","mng","avi","MTS","M2TS","TS","mov","qt","wmv","yuv","rm","rmvb","viv","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe","mpv","mpg","mpeg","m2v","m4v","svi","3gp","3g2","mxf","roq","nsv", "flv","f4v","f4p","f4a","f4b"));
-    public final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi","png","gif","webp","tiff","tif","raw","arw","cr2","nrw","psd","k25","bmp","dib","heif","heic","indd","ind","indt","jp2","j2k","jpf","jpx","jpm","mj2","svg","svgz","ai","eps"));
-    public final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
+    public static final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","flv","vob","ogv","ogg","drc","gif","gifv","mng","avi","MTS","M2TS","TS","mov","qt","wmv","yuv","rm","rmvb","viv","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe","mpv","mpg","mpeg","m2v","m4v","svi","3gp","3g2","mxf","roq","nsv", "flv","f4v","f4p","f4a","f4b"));
+    public static final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi","png","gif","webp","tiff","tif","raw","arw","cr2","nrw","psd","k25","bmp","dib","heif","heic","indd","ind","indt","jp2","j2k","jpf","jpx","jpm","mj2","svg","svgz","ai","eps"));
+    public static final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
     public static File currentDirectory;
     
     
@@ -175,17 +179,19 @@ public class MainGUI extends JFrame {
 	
 	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	
-	
+	ImageHandling.play();
 
         //setSize(1300, 800);
-	
+//	runwhatever("");
 	
 
 	
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
+	System.out.println("constructor called");
 	
-	EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-	//MainImage.removeAll();
+	//MainImage.setLayout(new BorderLayout());
+	//MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
+	//mediaPlayerComponent.mediaPlayer().media().play("D:\\Downloads\\template video.mp4");
 	
 	
 	
@@ -196,25 +202,20 @@ public class MainGUI extends JFrame {
     
     
     private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MainDirectorySearchActionPerformed
+	
+	
 	MainListManager listManagerClass = new MainListManager();
 	
-
-	//x.play();
-	//Canvas videoSurface = new Canvas();
-	
-	EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
 	
 	
+	MainImage.setIcon(null);
+	fileName.setText(null);
 	
-	MainImage.setLayout(new BorderLayout());
-	System.out.println(MainImage.getLayout()+"here");
-	MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
-	mediaPlayerComponent.mediaPlayer().media().play("D:\\Downloads\\template video.mp4");
-	MainImage.repaint();
-	//MainImage.setIcon(null);
-	//fileName.setText(null);
-	
-	listManagerClass.addItemsToMainList(MainFileList, evt);
+	try {
+	    listManagerClass.addItemsToMainList(MainFileList, evt);
+	} catch (IOException ex) {
+	    Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+	}
 	MainFileList.clearSelection();
 	MainFileList.repaint();
 	
@@ -222,17 +223,18 @@ public class MainGUI extends JFrame {
 
     private void MainFileListValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_MainFileListValueChanged
         
-	//System.out.println(evt.getPath());
+	System.out.println(evt.getPath());
 	fileName.setText(getFileNameWithoutExtension(evt.getPath()));
 	imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
 	
-	    
+	
+	
 	
 	
     }//GEN-LAST:event_MainFileListValueChanged
-
+    
     private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyButtonActionPerformed
-        
+
 	if(!"null".equals(MainFileList.getSelectionPath().toString())){
 	    //System.out.println(fileName.getText());
 	    File originalFile = new File(treePathCombiner(MainFileList.getSelectionPath(),0));
@@ -328,9 +330,9 @@ public class MainGUI extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ApplyButton;
     public static java.awt.Panel ImageHolderPanel;
-    public javax.swing.JFileChooser MainDirectorySearch;
+    public static javax.swing.JFileChooser MainDirectorySearch;
     private javax.swing.JTree MainFileList;
-    private javax.swing.JScrollPane MainFileListScroll;
+    private static javax.swing.JScrollPane MainFileListScroll;
     public static javax.swing.JLabel MainImage;
     private java.awt.Label VisibleFilesTitle;
     private javax.swing.JTextField fileName;
