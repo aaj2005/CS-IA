@@ -50,7 +50,6 @@ public class MainGUI extends JFrame {
         MainFileList = new javax.swing.JTree();
         fileName = new javax.swing.JTextField();
         ApplyButton = new javax.swing.JButton();
-        canvas2 = new java.awt.Canvas();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -123,11 +122,7 @@ public class MainGUI extends JFrame {
                         .addGap(41, 41, 41)
                         .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(canvas2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(126, 126, 126)))))
+                        .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ImageHolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -154,9 +149,7 @@ public class MainGUI extends JFrame {
                             .addComponent(ApplyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(canvas2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(333, 333, 333))
         );
 
@@ -172,29 +165,27 @@ public class MainGUI extends JFrame {
     
     
     public MainGUI() {
-	System.out.println(System.getProperty("sun.arch.data.model"));
+	
 
 	setSize(new Dimension(1920,1080));
 	
 	initComponents();
 	setLayout(new BorderLayout());
-	MainImage.setVisible(false);
 	//panel1.setLayout(new BorderLayout());
 	
 	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-	EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-	ImageHolderPanel.removeAll();
-	ImageHolderPanel.setLayout(new BorderLayout());
-	ImageHolderPanel.add(mediaPlayerComponent, BorderLayout.CENTER);
 	
 	
-	//add(ImageHolderPanel);
+
         //setSize(1300, 800);
 	
 	
-	//add(videoSurface);
-	mediaPlayerComponent.mediaPlayer().media().play("D:\\Downloads\\template video.mp4");
+
+	
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
+	
+	EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+	//MainImage.removeAll();
 	
 	
 	
@@ -211,7 +202,15 @@ public class MainGUI extends JFrame {
 	//x.play();
 	//Canvas videoSurface = new Canvas();
 	
+	EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
 	
+	
+	
+	MainImage.setLayout(new BorderLayout());
+	System.out.println(MainImage.getLayout()+"here");
+	MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
+	mediaPlayerComponent.mediaPlayer().media().play("D:\\Downloads\\template video.mp4");
+	MainImage.repaint();
 	//MainImage.setIcon(null);
 	//fileName.setText(null);
 	
@@ -320,8 +319,7 @@ public class MainGUI extends JFrame {
 	    public void run(){
 		MainGUI mainGUI = new MainGUI();
 		mainGUI.pack();
-		x = new VideoHandling();
-		x.run();
+		
 		mainGUI.setVisible(true);
 	    }
 	});
@@ -335,7 +333,6 @@ public class MainGUI extends JFrame {
     private javax.swing.JScrollPane MainFileListScroll;
     public static javax.swing.JLabel MainImage;
     private java.awt.Label VisibleFilesTitle;
-    public static java.awt.Canvas canvas2;
     private javax.swing.JTextField fileName;
     // End of variables declaration//GEN-END:variables
     

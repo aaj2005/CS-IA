@@ -9,14 +9,16 @@
  */
 
 
+//import MainGUI.ImageHolderPanel;
 import java.awt.BorderLayout;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.factory.ApplicationApi;
 import uk.co.caprica.vlcj.log.LogEventListener;
 import uk.co.caprica.vlcj.log.LogLevel;
 
-public class VideoHandling implements LogEventListener {
+public class VideoHandling extends MainGUI implements LogEventListener {
     EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+    
     public void run(){
 	
 	    
@@ -32,6 +34,7 @@ public class VideoHandling implements LogEventListener {
 	
 	
 	
+	//pack();
     
     
 	
