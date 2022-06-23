@@ -8,15 +8,25 @@
  * @author alial
  */
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import javax.swing.ImageIcon;
 ///*import java.util.Enumeration;
 //import java.util.zip.ZipEntry;
 //import java.util.zip.ZipFile;*/
 import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import org.apache.commons.io.FilenameUtils;
 
@@ -24,6 +34,8 @@ import org.apache.commons.io.FilenameUtils;
 public class MainListManager{
     DefaultTreeModel model;
     DefaultMutableTreeNode placeHolderNode;
+    static Map fileMapList = new HashMap();
+    static ImageIcon icon = new ImageIcon("//src//main//resources//zip-file.ico");
     public MainListManager() {        
         
     }
@@ -53,44 +65,76 @@ public class MainListManager{
             model = (DefaultTreeModel) MainFileList.getModel();
 	    //parentFile.add(new DefaultMutableTreeNode(path.getName()));
 	    model.setRoot(new DefaultMutableTreeNode(path.getName()));
-            getFileNames(path, (DefaultMutableTreeNode)model.getRoot());
-            MainFileList = new JTree(model);
-            model.reload();
+            getFileNames(path, (DefaultMutableTreeNode)model.getRoot(), new ArrayList(),0);
+            
+	    model.reload();
+	    
 	    return model;
     }
     
-    public File getFileNames(File folder, DefaultMutableTreeNode rootNode) throws IOException {
+    public File getFileNames(File folder, DefaultMutableTreeNode rootNode, ArrayList<Integer> folderPos, int depthPos) throws IOException {
 
         File[] fileList = folder.listFiles();
         if (fileList == null) {
-            return new File("C");
+            //return new File("C");
         }
-        try{
+	
+      
             for (final File file : fileList ) {
                 //Path path = Paths.get(file.toString());
                 //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-		if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-                    rootNode.add(new DefaultMutableTreeNode(file.getName()));
-		    
-		    
-                }else if(MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString())) ){
-		    rootNode.add(new DefaultMutableTreeNode(file.getName()));
-		}else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-                
-		}else if(file.isDirectory() && file.list().length>0){
-		    rootNode.add(new DefaultMutableTreeNode(file.getName()));
-		    
-                    File subFiles = new File(file.toString());
-                    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
-		    if(rootNode.getLastChild().getChildCount()<=0){
-		    	rootNode.remove(rootNode.getChildCount()-1);
+		    //System.out.println(file.list() + file.getName());
+		    if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString())) || MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+			folderPos.add(depthPos);
+			
+			rootNode.add(new DefaultMutableTreeNode(file.getName()));
+			//fileMapList.put(file.getName(), file);
+			
+			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos));
+			System.out.println(folderPos);
+			folderPos.remove(folderPos.size()-1);
+			depthPos++;
+			
+		    }else if( file.isDirectory() && file.list()!=null){
+			    rootNode.add(new DefaultMutableTreeNode(file.getName()));
+			    folderPos.add(depthPos);
+			    File subFiles = new File(file.toString());
+			   // System.out.println(folderPos);
+
+			    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild(),folderPos,0);
+			    depthPos++;
+			    if(rootNode.getLastChild().getChildCount()<=0){
+				
+				rootNode.remove(rootNode.getChildCount()-1);
+				depthPos--;
+			    }
+			    folderPos.remove(folderPos.size()-1);
+		    }else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+			//rootNode.add(new DefaultMutableTreeNode(file.getName()));
+			//fileMapList.put(file.getName(), file);
+			
+			/*MainGUI.MainFileList.setCellRenderer(new DefaultTreeCellRenderer() {
+			
+			@Override
+			public Component getTreeCellRendererComponent(JTree tree,
+				Object value, boolean selected, boolean expanded,
+				boolean isLeaf, int row, boolean focused) {
+			    Component c = super.getTreeCellRendererComponent(tree, value,
+				    selected, expanded, isLeaf, row, focused);
+			    setIcon(icon);
+			    return c;
+			}
+			});*/
 		    }
-                }
-		model.reload(rootNode);
+		    
+		    
+		
+                
+		
             }
-	}catch(IOException e){
-	    System.out.println(e);
-	}
+	    
+	    model.reload(rootNode);
+	
 	return null;
     }
     

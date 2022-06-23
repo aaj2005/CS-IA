@@ -1,5 +1,12 @@
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Stack;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -10,10 +17,11 @@ import java.io.File;
  *
  * @author alial
  */
-public class FileClass extends File{
+public class FileClass{
     
-    private String filename;
-    private String path;
+    public String filename;
+    private String absPath;    
+    //private String relPath;
     private long size;
     private String datemod;
     private String datecreated;
@@ -22,76 +30,19 @@ public class FileClass extends File{
     private String type;
     private int dimLength;
     private int dimWidth;
-
-    public FileClass(String pathname, String filename, String path, long size, String datemod, String datecreated, boolean hidden, boolean readonly, String type, int dimLength, int dimWidth) {
-	super(pathname);
+    
+    public ArrayList<Integer> relPath;
+    public FileClass(String filename, String path, DefaultMutableTreeNode rootFolder, ArrayList<Integer> pathDown){
+	//super(pathname);
 	this.filename = filename;
-	this.path = path;
-	this.size = size;
-	this.datemod = datemod;
-	this.datecreated = datecreated;
-	this.hidden = hidden;
-	this.readonly = readonly;
-	this.type = type;
-	this.dimLength = dimLength;
-	this.dimWidth = dimWidth;
+	absPath = path;
+	this.relPath = (ArrayList)pathDown.clone();
     }
-
-    public String getFilename() {
+    @Override
+    public String toString(){
 	return filename;
     }
-
-    public String getPath() {
-	return path;
-    }
-
-    public long getSize() {
-	return size;
-    }
-
-    public String getDatemod() {
-	return datemod;
-    }
-
-    public String getDatecreated() {
-	return datecreated;
-    }
-
-    public boolean isHidden() {
-	return hidden;
-    }
-
-    public boolean isReadonly() {
-	return readonly;
-    }
-
-    public String getType() {
-	return type;
-    }
-
-    public int getDimLength() {
-	return dimLength;
-    }
-
-    public int getDimWidth() {
-	return dimWidth;
-    }
-
-    public void setFilename(String filename) {
-	this.filename = filename;
-    }
-
-    public void setPath(String path) {
-	this.path = path;
-    }
-
-    public void setHidden(boolean hidden) {
-	this.hidden = hidden;
-    }
-
-    public void setReadonly(boolean readonly) {
-	this.readonly = readonly;
-    }
+    
     
     
     
