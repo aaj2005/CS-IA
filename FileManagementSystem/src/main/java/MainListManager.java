@@ -8,17 +8,12 @@
  * @author alial
  */
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import javax.swing.ImageIcon;
 ///*import java.util.Enumeration;
 //import java.util.zip.ZipEntry;
@@ -26,7 +21,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import org.apache.commons.io.FilenameUtils;
 
@@ -34,7 +28,6 @@ import org.apache.commons.io.FilenameUtils;
 public class MainListManager{
     DefaultTreeModel model;
     DefaultMutableTreeNode placeHolderNode;
-    static Map fileMapList = new HashMap();
     static ImageIcon icon = new ImageIcon("//src//main//resources//zip-file.ico");
     public MainListManager() {        
         
@@ -51,7 +44,7 @@ public class MainListManager{
             MainGUI.MainDirectorySearch.setCurrentDirectory(MainGUI.MainDirectorySearch.getSelectedFile());
 	    MainGUI.currentDirectory = MainGUI.MainDirectorySearch.getSelectedFile();
             MainListManager add = new MainListManager();
-
+	    
 	    MainFileList.setModel(add.retrieveFileNames(MainGUI.MainDirectorySearch.getSelectedFile(),MainFileList));
         }
     }
@@ -83,15 +76,13 @@ public class MainListManager{
             for (final File file : fileList ) {
                 //Path path = Paths.get(file.toString());
                 //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-		    //System.out.println(file.list() + file.getName());
 		    if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString())) || MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString()))){
 			folderPos.add(depthPos);
 			
 			rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			//fileMapList.put(file.getName(), file);
 			
-			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos));
-			System.out.println(folderPos);
+			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos,MainGUI.MainDirectorySearch.getSelectedFile()));
 			folderPos.remove(folderPos.size()-1);
 			depthPos++;
 			
@@ -99,8 +90,7 @@ public class MainListManager{
 			    rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			    folderPos.add(depthPos);
 			    File subFiles = new File(file.toString());
-			   // System.out.println(folderPos);
-
+			    rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos, MainGUI.MainDirectorySearch.getSelectedFile()));
 			    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild(),folderPos,0);
 			    depthPos++;
 			    if(rootNode.getLastChild().getChildCount()<=0){

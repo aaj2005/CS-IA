@@ -5,12 +5,17 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import org.apache.commons.io.FilenameUtils;
+import uk.co.caprica.vlcj.media.MediaRef;
+import uk.co.caprica.vlcj.media.TrackType;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 
@@ -38,6 +43,8 @@ public class ImageHandling{
 
 	}else if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(src)) ){
 	    mediaPlayerComponent.mediaPlayer().controls().stop();
+	    MainGUI.videoSlider.setEnabled(false);
+	    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-play+icon-1320183326084518754_16.png")));
 	    MainImage.removeAll();
 	    BufferedImage img = ImageIO.read(new File(src));
 	    if (img.getWidth() < MainImage.getWidth()/1.5 && img.getHeight() <MainImage.getHeight()/1.5){
@@ -48,15 +55,159 @@ public class ImageHandling{
 	    }
 	}else if(MainGUI.videoTypeList.contains(FilenameUtils.getExtension(src)) ){
 	    mediaPlayerComponent.mediaPlayer().controls().stop();
-	    
+	    MainGUI.videoSlider.setEnabled(true);
 	    MainImage.setLayout(new BorderLayout());
 	    
 	    MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
 	    mediaPlayerComponent.mediaPlayer().media().play(src);
+	    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
+	    System.out.println(mediaPlayerComponent.mediaPlayer().status().length());
+	    mediaPlayerComponent.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener(){
 
+		@Override
+		public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
+		}
+
+		@Override
+		public void opening(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void buffering(MediaPlayer mediaPlayer, float newCache) {
+		}
+
+		@Override
+		public void playing(MediaPlayer mediaPlayer) {
+		    //MainGUI.videoSlider.setMaximum((int)mediaPlayerComponent.mediaPlayer().status().time());
+		}
+
+		@Override
+		public void paused(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void stopped(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void forward(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void backward(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void finished(MediaPlayer mediaPlayer) {
+		    MainGUI.videoSlider.setValue((int)mediaPlayer.status().length());
+		}
+
+		@Override
+		public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
+		    MainGUI.videoSlider.setValue((int)newTime);
+		    
+		}
+
+		@Override
+		public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
+		}
+
+		@Override
+		public void seekableChanged(MediaPlayer mediaPlayer, int newSeekable) {
+		}
+
+		@Override
+		public void pausableChanged(MediaPlayer mediaPlayer, int newPausable) {
+		}
+
+		@Override
+		public void titleChanged(MediaPlayer mediaPlayer, int newTitle) {
+		}
+
+		@Override
+		public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
+		}
+
+		@Override
+		public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
+		    System.out.println((int)newLength);		    
+		    System.out.println(newLength);
+		    MainGUI.videoSlider.setMaximum((int)newLength);
+		}
+
+		@Override
+		public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
+		}
+
+		@Override
+		public void scrambledChanged(MediaPlayer mediaPlayer, int newScrambled) {
+		}
+
+		@Override
+		public void elementaryStreamAdded(MediaPlayer mediaPlayer, TrackType type, int id) {
+		}
+
+		@Override
+		public void elementaryStreamDeleted(MediaPlayer mediaPlayer, TrackType type, int id) {
+		}
+
+		@Override
+		public void elementaryStreamSelected(MediaPlayer mediaPlayer, TrackType type, int id) {
+		}
+
+		@Override
+		public void corked(MediaPlayer mediaPlayer, boolean corked) {
+		}
+
+		@Override
+		public void muted(MediaPlayer mediaPlayer, boolean muted) {
+		}
+
+		@Override
+		public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
+		}
+
+		@Override
+		public void audioDeviceChanged(MediaPlayer mediaPlayer, String audioDevice) {
+		}
+
+		@Override
+		public void chapterChanged(MediaPlayer mediaPlayer, int newChapter) {
+		}
+
+		@Override
+		public void error(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void mediaPlayerReady(MediaPlayer mediaPlayer) {
+		}
+
+	    });
+	    
+	    
+	    
 	}
 	
     }
+    
+    public static void pausePlay(){
+	 mediaPlayerComponent.mediaPlayer().controls().pause();
+	
+	
+    }
+    
+    public static int mediaExists(){
+	
+	return mediaPlayerComponent.mediaPlayer().status().videoOutputs();
+    }
+    
+    public static boolean isPlaying(){
+	
+	return mediaPlayerComponent.mediaPlayer().status().isPlaying();
+    }
+    
+    
     public static void play(){
 	mediaPlayerComponent.paused(mediaPlayerComponent.mediaPlayer());
 	MainGUI.MainImage.setLayout(new BorderLayout());
