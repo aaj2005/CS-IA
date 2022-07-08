@@ -58,14 +58,14 @@ public class MainListManager{
             model = (DefaultTreeModel) MainFileList.getModel();
 	    //parentFile.add(new DefaultMutableTreeNode(path.getName()));
 	    model.setRoot(new DefaultMutableTreeNode(path.getName()));
-            getFileNames(path, (DefaultMutableTreeNode)model.getRoot(), new ArrayList(),0);
+            getFileNames(path, (DefaultMutableTreeNode)model.getRoot());
             
 	    model.reload();
 	    
 	    return model;
     }
     
-    public File getFileNames(File folder, DefaultMutableTreeNode rootNode, ArrayList<Integer> folderPos, int depthPos) throws IOException {
+    public File getFileNames(File folder, DefaultMutableTreeNode rootNode) throws IOException {
 
         File[] fileList = folder.listFiles();
         if (fileList == null) {
@@ -77,28 +77,28 @@ public class MainListManager{
                 //Path path = Paths.get(file.toString());
                 //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
 		    if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString())) || MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-			folderPos.add(depthPos);
+			
 			
 			rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			//fileMapList.put(file.getName(), file);
 			
 			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos,MainGUI.MainDirectorySearch.getSelectedFile()));
-			folderPos.remove(folderPos.size()-1);
-			depthPos++;
+			
+			
 			
 		    }else if( file.isDirectory() && file.list()!=null){
 			    rootNode.add(new DefaultMutableTreeNode(file.getName()));
-			    folderPos.add(depthPos);
+			    
 			    File subFiles = new File(file.toString());
 			    rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos, MainGUI.MainDirectorySearch.getSelectedFile()));
-			    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild(),folderPos,0);
-			    depthPos++;
+			    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
+			    
 			    if(rootNode.getLastChild().getChildCount()<=0){
 				
 				rootNode.remove(rootNode.getChildCount()-1);
-				depthPos--;
+				
 			    }
-			    folderPos.remove(folderPos.size()-1);
+			    
 		    }else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
 			//rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			//fileMapList.put(file.getName(), file);

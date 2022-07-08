@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -58,17 +60,17 @@ public class MainGUI extends JFrame {
         Basket = new javax.swing.JTree();
         BasketLabel = new java.awt.Label();
         MoveButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        videoLengthTime = new javax.swing.JLabel();
         videoSlider = new javax.swing.JSlider();
         pausePlayButton = new javax.swing.JButton();
+        currentTime = new javax.swing.JLabel();
+        addToBasketButton = new javax.swing.JButton();
 
         moveFileChooser.setCurrentDirectory(new java.io.File("D:\\"));
             moveFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
             setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-            setMaximumSize(new java.awt.Dimension(644, 399));
             setMinimumSize(new java.awt.Dimension(644, 399));
-            setPreferredSize(new java.awt.Dimension(644, 399));
 
             VisibleFilesTitle.setAlignment(java.awt.Label.CENTER);
             VisibleFilesTitle.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
@@ -128,8 +130,9 @@ public class MainGUI extends JFrame {
                 }
             });
 
-            treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Files");
+            treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Basket");
             Basket.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+            Basket.setToolTipText("");
             BaskScroll.setViewportView(Basket);
 
             BasketLabel.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
@@ -144,18 +147,41 @@ public class MainGUI extends JFrame {
                 }
             });
 
-            jLabel1.setText("00:00:00");
-            jLabel1.setAlignmentY(0.0F);
+            videoLengthTime.setText("00:00:00");
+            videoLengthTime.setAlignmentY(0.0F);
 
             videoSlider.setMaximum(0);
             videoSlider.setPaintLabels(true);
             videoSlider.setToolTipText("");
-            videoSlider.setValue(0);
+            videoSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                    videoSliderStateChanged(evt);
+                }
+            });
+            videoSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mousePressed(java.awt.event.MouseEvent evt) {
+                    videoSliderMousePressed(evt);
+                }
+                public void mouseReleased(java.awt.event.MouseEvent evt) {
+                    videoSliderMouseReleased(evt);
+                }
+            });
 
             pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-play+icon-1320183326084518754_16.png"))); // NOI18N
             pausePlayButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     pausePlayButtonActionPerformed(evt);
+                }
+            });
+
+            currentTime.setText("00:00:00");
+            currentTime.setAlignmentY(0.0F);
+
+            addToBasketButton.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+            addToBasketButton.setText("+");
+            addToBasketButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    addToBasketButtonActionPerformed(evt);
                 }
             });
 
@@ -170,21 +196,25 @@ public class MainGUI extends JFrame {
                             .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(BasketLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(BasketLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(addToBasketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addComponent(VisibleFilesTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(pausePlayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(videoSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(31, 31, 31)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(ImageHolderPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(pausePlayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(currentTime, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(videoSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(videoLengthTime, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+                            .addComponent(ImageHolderPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(72, 72, 72)
                             .addComponent(fileName, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -192,7 +222,7 @@ public class MainGUI extends JFrame {
                             .addComponent(ApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(MoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap())))
+                            .addContainerGap(200, Short.MAX_VALUE))))
             );
             layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -203,26 +233,28 @@ public class MainGUI extends JFrame {
                         .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(BasketLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(8, 8, 8)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(fileName, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(ApplyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(MoveButton)))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(11, 11, 11)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(pausePlayButton)
-                                        .addComponent(videoSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGap(0, 0, Short.MAX_VALUE)))
-                            .addGap(140, 140, 140))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(pausePlayButton)
+                                    .addComponent(currentTime, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(videoLengthTime, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(15, 15, 15)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(fileName, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ApplyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(MoveButton))
+                            .addGap(140, 140, 140))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(3, 3, 3)
+                            .addComponent(videoSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap())
+                        .addGroup(layout.createSequentialGroup()
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(BasketLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(addToBasketButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addGap(22, 22, 22)
                     .addComponent(VisibleFilesTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -250,7 +282,7 @@ public class MainGUI extends JFrame {
 	setLayout(new BorderLayout());
 	
 	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-	
+	MainGUI.Basket.setRootVisible(false);
 	ImageHandling.play();
 	
 	
@@ -361,18 +393,44 @@ public class MainGUI extends JFrame {
     }//GEN-LAST:event_MoveButtonActionPerformed
 
     private void pausePlayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausePlayButtonActionPerformed
-        if(ImageHandling.mediaExists()>0){
-	    ImageHandling.pausePlay();
-	    if(ImageHandling.isPlaying()){
-		pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-play+icon-1320183326084518754_16.png")));
-	    }else{
-		pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
-	    }
-	}
+        ImageHandling.mediaPlayerComponent.mediaPlayer().controls().pause();
 	
 	
     }//GEN-LAST:event_pausePlayButtonActionPerformed
 
+    private void videoSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_videoSliderMouseReleased
+        ImageHandling.changeTime(videoSlider.getValue());
+	ImageHandling.pausePlay();
+    }//GEN-LAST:event_videoSliderMouseReleased
+
+    private void videoSliderMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_videoSliderMousePressed
+        ImageHandling.pausePlay();
+    }//GEN-LAST:event_videoSliderMousePressed
+
+    private void videoSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_videoSliderStateChanged
+       if(!ImageHandling.isPlaying()){
+	   long newLength = videoSlider.getValue();
+	   String formattedLength = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(newLength),
+		    TimeUnit.MILLISECONDS.toMinutes(newLength) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(newLength)),
+		    TimeUnit.MILLISECONDS.toSeconds(newLength) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(newLength)));
+		    
+	    currentTime.setText(formattedLength);
+	    
+       }
+    }//GEN-LAST:event_videoSliderStateChanged
+
+    private void addToBasketButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToBasketButtonActionPerformed
+        if("+".equals(addToBasketButton.getText())){
+	    BasketListManager.addToBasket();
+	    addToBasketButton.setText("-");
+	}else{
+	    BasketListManager.removeFromBasket();
+	    addToBasketButton.setText("+");
+	}
+	
+	
+	
+    }//GEN-LAST:event_addToBasketButtonActionPerformed
     
     private String treePathCombiner(TreePath treePath, int endIndexRemover){
 	StringBuilder finalPath = new StringBuilder();
@@ -467,10 +525,12 @@ public class MainGUI extends JFrame {
     public static javax.swing.JLabel MainImage;
     private javax.swing.JButton MoveButton;
     private java.awt.Label VisibleFilesTitle;
+    private javax.swing.JButton addToBasketButton;
+    public static javax.swing.JLabel currentTime;
     private javax.swing.JTextField fileName;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JFileChooser moveFileChooser;
     public static javax.swing.JButton pausePlayButton;
+    public static javax.swing.JLabel videoLengthTime;
     public static javax.swing.JSlider videoSlider;
     // End of variables declaration//GEN-END:variables
     
