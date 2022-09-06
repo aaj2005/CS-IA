@@ -1,7 +1,7 @@
 
 import java.io.File;
-import java.util.ArrayList;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -16,15 +16,9 @@ public class BasketFileClass extends FileClass{
     
     
     
-    
-    public BasketFileClass(String filename, String path, DefaultMutableTreeNode rootFolder, ArrayList<Integer> pathDown, File parentPath) {
-	super(filename, path, rootFolder, pathDown, parentPath);
+    public BasketFileClass(String filename, String path, DefaultMutableTreeNode rootFolder, TreePath FilePath, File parentPath, boolean inBasket) {
+	super(filename, path, rootFolder, FilePath, parentPath, inBasket);
     }
-    
-    
-    
-    
-    
     
     
 }

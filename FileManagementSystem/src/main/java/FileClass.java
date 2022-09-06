@@ -8,6 +8,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import org.apache.commons.io.FileUtils;
 
 /*
@@ -21,9 +22,9 @@ import org.apache.commons.io.FileUtils;
  */
 public class FileClass{
     
-    public String filename;
-    public String absPath;    
-    public String parentPath;
+    private String filename;
+    private String absPath;    
+    private String parentPath;
     private long size;
     private String datemod;
     private String datecreated;
@@ -32,16 +33,19 @@ public class FileClass{
     private String type;
     private int dimLength;
     private int dimWidth;
+    private TreePath FilePath;
+    private boolean inBasket;
     
-    public ArrayList<Integer> relPath;
-    public FileClass(String filename, String path, DefaultMutableTreeNode rootFolder, ArrayList<Integer> pathDown, File parentPath){
+    public FileClass(String filename, String path, DefaultMutableTreeNode rootFolder, TreePath FilePath, File parentPath, boolean inBasket){
 	//super(pathname);
 	this.filename = filename;
 	absPath = path;
-	this.relPath = (ArrayList)pathDown.clone();
+	this.FilePath = FilePath;
 	this.parentPath = parentPath.getAbsolutePath();
-	
+	this.inBasket = inBasket;
     }
+
+    
     
     public void moveFolder(String dir2) throws IOException{
 	File initialDir = new File(absPath);
@@ -54,7 +58,20 @@ public class FileClass{
 	File finalDir = new File(dir2);
 	FileUtils.moveFileToDirectory(initialDir, finalDir,false);
     }
-    
+
+    public String getAbsPath() {
+	return absPath;
+    }
+    public void setInBasket(boolean inBasket) {
+	this.inBasket = inBasket;
+    }
+
+    public boolean isInBasket() {
+	return inBasket;
+    }
+    public void removeFromBasket(){
+	inBasket=false;
+    }
     
     /*public FileClass(String filename, String path){
 	//super(pathname);

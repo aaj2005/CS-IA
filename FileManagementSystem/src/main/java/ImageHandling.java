@@ -100,7 +100,6 @@ public class ImageHandling{
 		    MainGUI.videoSlider.setMaximum(0);
 		    MainGUI.videoSlider.setValue(0);
 		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-play+icon-1320183326084518754_16.png")));
-
 		}
 
 		@Override
@@ -113,7 +112,7 @@ public class ImageHandling{
 
 		@Override
 		public void finished(MediaPlayer mediaPlayer) {
-		    MainGUI.videoSlider.setValue((int)mediaPlayer.status().length());
+		    
 		}
 
 		@Override
@@ -214,7 +213,10 @@ public class ImageHandling{
 	}
 	
     }
-    
+    public static void stopAll(){
+	if(isPlaying()){mediaPlayerComponent.mediaPlayer().controls().stop();}
+	MainGUI.MainImage.setIcon(new ImageIcon());
+    }
     public static void pausePlay(){
 	 mediaPlayerComponent.mediaPlayer().controls().pause();
 	

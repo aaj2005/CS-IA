@@ -1,19 +1,33 @@
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTree;
+import javax.swing.ScrollPaneLayout;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
@@ -133,6 +147,7 @@ public class MainGUI extends JFrame {
             treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Basket");
             Basket.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
             Basket.setToolTipText("");
+            Basket.setFocusable(false);
             BaskScroll.setViewportView(Basket);
 
             BasketLabel.setFont(new java.awt.Font("Dialog", 0, 32)); // NOI18N
@@ -196,13 +211,14 @@ public class MainGUI extends JFrame {
                             .addComponent(MainFileListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(BasketLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(addToBasketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(BaskScroll)))
                         .addComponent(VisibleFilesTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -222,17 +238,28 @@ public class MainGUI extends JFrame {
                             .addComponent(ApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(MoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap(200, Short.MAX_VALUE))))
+                            .addContainerGap(197, Short.MAX_VALUE))))
             );
             layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createSequentialGroup()
                     .addGap(42, 42, 42)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(ImageHolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(MainDirectorySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
+                            .addGap(3, 3, 3)
+                            .addComponent(videoSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap())
+                        .addGroup(layout.createSequentialGroup()
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(BasketLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(addToBasketButton))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(pausePlayButton)
@@ -243,19 +270,8 @@ public class MainGUI extends JFrame {
                                 .addComponent(fileName, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(ApplyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(MoveButton))
-                            .addGap(140, 140, 140))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(3, 3, 3)
-                            .addComponent(videoSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap())
-                        .addGroup(layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(BasketLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(addToBasketButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGap(140, 140, 140))))
+                .addGroup(layout.createSequentialGroup()
                     .addGap(22, 22, 22)
                     .addComponent(VisibleFilesTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
@@ -275,16 +291,24 @@ public class MainGUI extends JFrame {
     
     public MainGUI() {
 	
-
+	
 	setSize(new Dimension(1920,1080));
 	
 	initComponents();
 	setLayout(new BorderLayout());
 	
+
+	
 	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	MainGUI.Basket.setRootVisible(false);
+	MainGUI.MainFileList.setRootVisible(false);
 	ImageHandling.play();
+	Basket.setEditable(true);
+	Basket.setCellRenderer(new BasketRendering());
+	Basket.setCellEditor(new BasketEditing(Basket));
+
 	
+
 	
 	videoSlider.setEnabled(false);
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -295,7 +319,7 @@ public class MainGUI extends JFrame {
     private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MainDirectorySearchActionPerformed
 	
 	
-	MainListManager listManagerClass = new MainListManager();
+	TreeInsertionManager listManagerClass = new TreeInsertionManager();
 	
 	
 	
@@ -303,7 +327,7 @@ public class MainGUI extends JFrame {
 	fileName.setText(null);
 	
 	try {
-	    listManagerClass.addItemsToMainList(MainFileList, evt);
+	    currentDirectory = listManagerClass.addFolderContentToTree(MainFileList, evt, MainDirectorySearch);
 	} catch (IOException ex) {
 	    Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -318,8 +342,13 @@ public class MainGUI extends JFrame {
 	
 	//System.out.println(MainListManager.fileMapList.size());
 	fileName.setText(getFileNameWithoutExtension(evt.getPath()));
+	System.out.println(((DefaultMutableTreeNode)evt.getPath().getLastPathComponent()).getUserObject().getClass());
+	if(((FileClass)((DefaultMutableTreeNode)evt.getPath().getLastPathComponent()).getUserObject()).isInBasket()){
+	    addToBasketButton.setText("-");
+	}else{
+	    addToBasketButton.setText("+");
+	}
 	imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
-	
 	
 	
 	
@@ -367,7 +396,7 @@ public class MainGUI extends JFrame {
 	    if(MainFileList.getLastSelectedPathComponent()!=null){
 		DefaultMutableTreeNode selectedFile = (DefaultMutableTreeNode) MainFileList.getLastSelectedPathComponent();
 		FileClass selectedFileClass = (FileClass) selectedFile.getUserObject();
-		if(!(new File(moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+MainFileList.getLastSelectedPathComponent()).isFile()) && (new File(selectedFileClass.absPath)).isFile()){
+		if(!(new File(moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+MainFileList.getLastSelectedPathComponent()).isFile()) && (new File(selectedFileClass.getAbsPath())).isFile()){
 		    System.out.println("here");
 
 		    try {
@@ -421,12 +450,15 @@ public class MainGUI extends JFrame {
 
     private void addToBasketButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToBasketButtonActionPerformed
         if("+".equals(addToBasketButton.getText())){
+	    
 	    BasketListManager.addToBasket();
-	    addToBasketButton.setText("-");
+	    ((FileClass)((DefaultMutableTreeNode)MainFileList.getLastSelectedPathComponent()).getUserObject()).setInBasket(true);
+	    
+	    
 	}else{
 	    BasketListManager.removeFromBasket();
-	    addToBasketButton.setText("+");
 	}
+	
 	
 	
 	
@@ -452,27 +484,7 @@ public class MainGUI extends JFrame {
 	filename = filename.replaceAll("."+FilenameUtils.getExtension(filename), "");
 	return filename;
     }
-    
-    private String findRelativeFilePos(Object[] pathIntArray){
-	StringBuilder path = new StringBuilder();
-	DefaultMutableTreeNode rootHead = (DefaultMutableTreeNode)MainFileList.getModel().getRoot();
-	for (Object pathInt : pathIntArray) {
-	    path.append("\\").append(rootHead.getChildAt((int)pathInt));
-	    rootHead=(DefaultMutableTreeNode)rootHead.getChildAt((int)pathInt);
-	    
-	}
-	return path.toString();
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+ 
     /**
      * @param args the command line arguments
      */
@@ -503,6 +515,7 @@ public class MainGUI extends JFrame {
 
         /* Create and display the form */
 	
+	
         java.awt.EventQueue.invokeLater(new Runnable(){
 	    public void run(){
 		MainGUI mainGUI = new MainGUI();
@@ -515,7 +528,7 @@ public class MainGUI extends JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ApplyButton;
-    private javax.swing.JScrollPane BaskScroll;
+    public static javax.swing.JScrollPane BaskScroll;
     public static javax.swing.JTree Basket;
     private java.awt.Label BasketLabel;
     public static java.awt.Panel ImageHolderPanel;
@@ -525,7 +538,7 @@ public class MainGUI extends JFrame {
     public static javax.swing.JLabel MainImage;
     private javax.swing.JButton MoveButton;
     private java.awt.Label VisibleFilesTitle;
-    private javax.swing.JButton addToBasketButton;
+    public static javax.swing.JButton addToBasketButton;
     public static javax.swing.JLabel currentTime;
     private javax.swing.JTextField fileName;
     private javax.swing.JFileChooser moveFileChooser;

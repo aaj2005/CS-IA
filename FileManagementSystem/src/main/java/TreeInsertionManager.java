@@ -11,9 +11,6 @@
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.ImageIcon;
 ///*import java.util.Enumeration;
 //import java.util.zip.ZipEntry;
@@ -22,48 +19,40 @@ import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import org.apache.commons.io.FilenameUtils;
 
 
-public class MainListManager{
-    DefaultTreeModel model;
+public class TreeInsertionManager{
+    DefaultTreeModel treeModel;
     DefaultMutableTreeNode placeHolderNode;
-    static ImageIcon icon = new ImageIcon("//src//main//resources//zip-file.ico");
-    public MainListManager() {        
+    public TreeInsertionManager() {        
         
     }
     
 
        
 
-    public void addItemsToMainList(JTree MainFileList, ActionEvent evt) throws IOException{
-	if ("ApproveSelection".equals(evt.getActionCommand())) {
-            
-            MainGUI.MainDirectorySearch = (JFileChooser) evt.getSource();
+    public File addFolderContentToTree(JTree FileTree, ActionEvent evt, JFileChooser DirectorySearch) throws IOException{
+	if ("ApproveSelection".equals(evt.getActionCommand())) {	    
+            DirectorySearch = (JFileChooser) evt.getSource();
             //System.out.println(MainDirectorySearch.getSelectedFile());
-            MainGUI.MainDirectorySearch.setCurrentDirectory(MainGUI.MainDirectorySearch.getSelectedFile());
-	    MainGUI.currentDirectory = MainGUI.MainDirectorySearch.getSelectedFile();
-            MainListManager add = new MainListManager();
+            DirectorySearch.setCurrentDirectory(DirectorySearch.getSelectedFile());
 	    
-	    MainFileList.setModel(add.retrieveFileNames(MainGUI.MainDirectorySearch.getSelectedFile(),MainFileList));
-        }
-    }
-    
-    
-    public DefaultTreeModel retrieveFileNames(File path, JTree MainFileList) throws IOException{
-            
-            
-            
-            
-            model = (DefaultTreeModel) MainFileList.getModel();
+	    treeModel = (DefaultTreeModel) FileTree.getModel();
 	    //parentFile.add(new DefaultMutableTreeNode(path.getName()));
-	    model.setRoot(new DefaultMutableTreeNode(path.getName()));
-            getFileNames(path, (DefaultMutableTreeNode)model.getRoot());
-            
-	    model.reload();
+	    treeModel.setRoot(new DefaultMutableTreeNode(DirectorySearch.getSelectedFile().getName()));
+            getFileNames(DirectorySearch.getSelectedFile(), (DefaultMutableTreeNode)treeModel.getRoot());
+	    treeModel.reload();
 	    
-	    return model;
+	    FileTree.setModel(treeModel);
+	    return MainGUI.MainDirectorySearch.getSelectedFile();
+        }
+	return DirectorySearch.getCurrentDirectory();
     }
+    
+    
+    
     
     public File getFileNames(File folder, DefaultMutableTreeNode rootNode) throws IOException {
 
@@ -82,23 +71,16 @@ public class MainListManager{
 			rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			//fileMapList.put(file.getName(), file);
 			
-			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos,MainGUI.MainDirectorySearch.getSelectedFile()));
-			
-			
+			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, new TreePath(rootNode.getLastLeaf().getPath()),MainGUI.MainDirectorySearch.getSelectedFile(),false));
 			
 		    }else if( file.isDirectory() && file.list()!=null){
 			    rootNode.add(new DefaultMutableTreeNode(file.getName()));
-			    
 			    File subFiles = new File(file.toString());
-			    rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, folderPos, MainGUI.MainDirectorySearch.getSelectedFile()));
+			    rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, new TreePath(rootNode.getLastLeaf().getPath()), MainGUI.MainDirectorySearch.getSelectedFile(),false));
 			    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
-			    
 			    if(rootNode.getLastChild().getChildCount()<=0){
-				
 				rootNode.remove(rootNode.getChildCount()-1);
-				
 			    }
-			    
 		    }else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
 			//rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			//fileMapList.put(file.getName(), file);
@@ -123,7 +105,7 @@ public class MainListManager{
 		
             }
 	    
-	    model.reload(rootNode);
+	    treeModel.reload(rootNode);
 	
 	return null;
     }
