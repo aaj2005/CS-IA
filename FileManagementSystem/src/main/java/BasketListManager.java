@@ -32,28 +32,34 @@ public class BasketListManager {
     JPanel renderer;
 
     DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
-    
-    public static void addToBasket(){
+    DefaultTreeModel BasketTreeModel = (DefaultTreeModel) MainGUI.Basket.getModel();
+
+    public static void addToBasket(DefaultTreeModel BasketTreeModel){
 //    DefaultMutableTreeNode componentAdded
-	DefaultTreeModel model = (DefaultTreeModel) MainGUI.Basket.getModel();
 	
-	((DefaultMutableTreeNode)model.getRoot()).add((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent());
-	((DefaultMutableTreeNode)model.getRoot()).getLastLeaf().setUserObject(((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject());
-	model.reload();
-	MainGUI.Basket.setModel(model);
+	((DefaultMutableTreeNode)BasketTreeModel.getRoot()).add((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent());
+	((DefaultMutableTreeNode)BasketTreeModel.getRoot()).getLastLeaf().setUserObject(((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject());
+	BasketTreeModel.reload();
+	MainGUI.Basket.setModel(BasketTreeModel);
 	//MainGUI.Basket.setSelectionPath(new TreePath(((DefaultMutableTreeNode)MainGUI.Basket.getModel().getRoot()).getLastLeaf().getPath()));
 	MainGUI.addToBasketButton.setText("-");
     }
     
     public static void removeFromBasket(){
 	DefaultTreeModel model = (DefaultTreeModel) MainGUI.Basket.getModel();
-	((DefaultMutableTreeNode)model.getRoot()).remove((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent());
-	((FileClass)((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject()).removeFromBasket();
+	MainGUI.Basket.getSelectionPaths();
+	for(int path=0; path<MainGUI.Basket.getSelectionPaths().length;path++){
+	    ((DefaultMutableTreeNode)model.getRoot()).remove((DefaultMutableTreeNode)MainGUI.Basket.getSelectionPaths()[path].getLastPathComponent());
+	    ((FileClass)((DefaultMutableTreeNode)MainGUI.Basket.getSelectionPaths()[path].getLastPathComponent()).getUserObject()).removeFromBasket();
+	}
+	
 	
 	model.reload();
 	MainGUI.Basket.setModel(model);
 	MainGUI.addToBasketButton.setText("+");
     }
+    
+    
 
     public BasketListManager() {
     }

@@ -1,5 +1,4 @@
 MainGUI$9.class
-BasketRendering$1.class
 MainGUI$7.class
 MainGUI$2.class
 BasketFileClass.class
@@ -7,14 +6,14 @@ MainGUI$5.class
 FileClass.class
 MainGUI$8.class
 ImageHandling.class
+MainGUI$10.class
 MainGUI$3.class
 BasketListManager.class
 FileInit.class
 ImageHandling$1.class
+MainGUI$11.class
 MainGUI$6.class
 TreeInsertionManager.class
-BasketEditing.class
 MainGUI.class
-BasketRendering.class
 MainGUI$1.class
 MainGUI$4.class

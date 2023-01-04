@@ -66,7 +66,6 @@ public class ImageHandling{
 	    MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
 	    mediaPlayerComponent.mediaPlayer().media().play(src);
 	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass().getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
-	    System.out.println(mediaPlayerComponent.mediaPlayer().status().length());
 	    mediaPlayerComponent.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener(){
 
 		@Override
@@ -146,8 +145,6 @@ public class ImageHandling{
 
 		@Override
 		public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
-		    System.out.println((int)newLength);		    
-		    System.out.println(newLength);
 		    MainGUI.videoSlider.setMaximum((int)newLength);
 		    String formattedLength = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(newLength),
 		    TimeUnit.MILLISECONDS.toMinutes(newLength) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(newLength)),
