@@ -34,15 +34,15 @@ public class FileClass{
     private int dimLength;
     private int dimWidth;
     private TreePath FilePath;
-    private boolean inBasket;
+    private boolean isDirectory;
     
-    public FileClass(String filename, String path, DefaultMutableTreeNode rootFolder, TreePath FilePath, File parentPath, boolean inBasket){
-	//super(pathname);
+    public FileClass(String filename, String path, DefaultMutableTreeNode rootFolder, TreePath FilePath,
+	    File parentPath, boolean isDirectory){
 	this.filename = filename;
 	absPath = path;
 	this.FilePath = FilePath;
 	this.parentPath = parentPath.getAbsolutePath();
-	this.inBasket = inBasket;
+	this.isDirectory = isDirectory;
     }
 
     
@@ -51,6 +51,10 @@ public class FileClass{
 	File initialDir = new File(absPath);
 	File finalDir = new File(dir2);
 	FileUtils.moveDirectoryToDirectory(initialDir, finalDir,false);
+    }
+    
+    public TreePath getFilePath(){
+	return FilePath;
     }
     
     public void moveFile(String dir2) throws IOException{
@@ -62,30 +66,13 @@ public class FileClass{
     public String getAbsPath() {
 	return absPath;
     }
-    public void setInBasket(boolean inBasket) {
-	this.inBasket = inBasket;
-    }
-
-    public boolean isInBasket() {
-	return inBasket;
-    }
-    public void removeFromBasket(){
-	inBasket=false;
-    }
     
-    /*public FileClass(String filename, String path){
-	//super(pathname);
-	this.filename = filename;
-	absPath = path;
-	this.relPath = new ArrayList();
-    }*/
     @Override
     public String toString(){
 	return filename;
     }
-    
-    
-    
-    
-
+    public boolean isDirectory(){
+	return this.isDirectory;
+    }
+  
 }

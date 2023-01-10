@@ -19,6 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.io.FilenameUtils;
 
@@ -26,6 +27,8 @@ import org.apache.commons.io.FilenameUtils;
 public class TreeInsertionManager{
     DefaultTreeModel treeModel;
     DefaultMutableTreeNode placeHolderNode;
+    TreeNode root;
+    
     public TreeInsertionManager() {        
         
     }
@@ -33,59 +36,97 @@ public class TreeInsertionManager{
 
        
 
-    public File addFolderContentToTree(JTree FileTree, ActionEvent evt, JFileChooser DirectorySearch) throws IOException{
-	if ("ApproveSelection".equals(evt.getActionCommand())) {	    
-            DirectorySearch = (JFileChooser) evt.getSource();
-            //System.out.println(MainDirectorySearch.getSelectedFile());
-            DirectorySearch.setCurrentDirectory(DirectorySearch.getSelectedFile());
+    public File addFolderContentToTree(JTree FileTree, String Path,File selectedFile) throws IOException{
+            
 	    
 	    treeModel = (DefaultTreeModel) FileTree.getModel();
-	    //parentFile.add(new DefaultMutableTreeNode(path.getName()));
-	    treeModel.setRoot(new DefaultMutableTreeNode(DirectorySearch.getSelectedFile().getName()));
-            getFileNames(DirectorySearch.getSelectedFile(), (DefaultMutableTreeNode)treeModel.getRoot());
-	    treeModel.reload();
+	    treeModel.setRoot(new DefaultMutableTreeNode(selectedFile.getName()));
+            getFileNames(selectedFile, (DefaultMutableTreeNode)treeModel.getRoot());
 	    
+	    //treeModel.reload(root);
+	    treeModel.reload();
 	    FileTree.setModel(treeModel);
 	    return MainGUI.MainDirectorySearch.getSelectedFile();
-        }
-	return DirectorySearch.getCurrentDirectory();
+	
+    }
+    public void addFolderToBasket(JTree FileTree, String Path,File selectedFile) throws IOException{
+	treeModel = (DefaultTreeModel) FileTree.getModel();
+	
+	DefaultMutableTreeNode upperRoot = ((DefaultMutableTreeNode)(treeModel.getRoot()));
+	if(selectedFile.isFile()){
+	    upperRoot.add(new DefaultMutableTreeNode(selectedFile.getName()));
+	    upperRoot.getLastLeaf().setUserObject(new FileClass(selectedFile.getName(),
+				selectedFile.getAbsolutePath(),
+				upperRoot,
+				new TreePath(upperRoot.getLastLeaf().getPath()),
+				MainGUI.MainDirectorySearch.getSelectedFile(),
+				false));
+	}else{
+	    upperRoot.add(new DefaultMutableTreeNode(selectedFile.getName()));
+	    upperRoot.getLastLeaf().setUserObject(new FileClass(selectedFile.getName(),
+				selectedFile.getAbsolutePath(),
+				upperRoot,
+				new TreePath(upperRoot.getLastLeaf().getPath()),
+				MainGUI.MainDirectorySearch.getSelectedFile(),
+				true));
+
+	    getFileNames(selectedFile, (DefaultMutableTreeNode)upperRoot.getLastChild());
+	}
+	
+	
+	    
+	treeModel.reload();
+	FileTree.setModel(treeModel);
     }
     
     
     
-    
     public File getFileNames(File folder, DefaultMutableTreeNode rootNode) throws IOException {
-
-        File[] fileList = folder.listFiles();
-        if (fileList == null) {
-            //return new File("C");
-        }
+        File[] fileList;
+	fileList = folder.listFiles();
 	
-      
+	
+        if (fileList == null) {
+	    
+        }
             for (final File file : fileList ) {
-                //Path path = Paths.get(file.toString());
-                //BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-		    if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString())) || MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-			
+		    if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString())) ||
+			    MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString()))){
 			
 			rootNode.add(new DefaultMutableTreeNode(file.getName()));
-			//fileMapList.put(file.getName(), file);
-			
-			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, new TreePath(rootNode.getLastLeaf().getPath()),MainGUI.MainDirectorySearch.getSelectedFile(),false));
+			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(),
+				file.getAbsolutePath(),
+				rootNode,
+				new TreePath(rootNode.getLastLeaf().getPath()),
+				MainGUI.MainDirectorySearch.getSelectedFile(),
+				false));
 			
 		    }else if( file.isDirectory() && file.list()!=null){
 			    rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			    File subFiles = new File(file.toString());
-			    rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(), file.getAbsolutePath(), rootNode, new TreePath(rootNode.getLastLeaf().getPath()), MainGUI.MainDirectorySearch.getSelectedFile(),false));
+			    rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(),
+				    file.getAbsolutePath(),
+				    rootNode,
+				    new TreePath(rootNode.getLastLeaf().getPath()),
+				    MainGUI.MainDirectorySearch.getSelectedFile(),
+				    false));
 			    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
-			    if(rootNode.getLastChild().getChildCount()<=0){
+			    if(rootNode.getLastChild().getChildCount()==0){
 				rootNode.remove(rootNode.getChildCount()-1);
 			    }
-		    }else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+		    }
+            }
+	    root = rootNode;
+	return null;
+    }
+    
+}
+
+/*else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
 			//rootNode.add(new DefaultMutableTreeNode(file.getName()));
 			//fileMapList.put(file.getName(), file);
 			
-			/*MainGUI.MainFileList.setCellRenderer(new DefaultTreeCellRenderer() {
+			MainGUI.MainFileList.setCellRenderer(new DefaultTreeCellRenderer() {
 			
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree,
@@ -96,21 +137,10 @@ public class TreeInsertionManager{
 			    setIcon(icon);
 			    return c;
 			}
-			});*/
-		    }
-		    
-		    
-		
-                
-		
-            }
-	    
-	    treeModel.reload(rootNode);
-	
-	return null;
-    }
-    
-}
+			});
+		    }*/
+
+
 
 
 

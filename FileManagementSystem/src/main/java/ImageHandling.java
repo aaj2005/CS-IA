@@ -1,5 +1,3 @@
-
-
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -38,9 +36,6 @@ public class ImageHandling{
     }
     
     public void setImage(String src, JLabel MainImage) throws IOException, InterruptedException{
-		
-	
-	
 	int type = BufferedImage.TYPE_INT_ARGB;
 	if(new File(src).isDirectory()){
 
@@ -49,13 +44,15 @@ public class ImageHandling{
 	    if(isPlaying()){mediaPlayerComponent.mediaPlayer().controls().stop();}
 	    
 	    MainGUI.videoSlider.setEnabled(false);
-	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass().getResource("/download-icon-play+icon-1320183326084518754_16.png")));
+	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass()
+		    .getResource("/download-icon-play+icon-1320183326084518754_16.png")));
 	    MainImage.removeAll();
 	    
 	    if (img.getWidth() < MainImage.getWidth()/1.5 && img.getHeight() <MainImage.getHeight()/1.5){
 		MainImage.setIcon(new ImageIcon(img));
 	    }else{
-		MainImage.setIcon(new ImageIcon(img.getScaledInstance(MainImage.getWidth(), MainImage.getHeight(),
+		MainImage.setIcon(new ImageIcon(img.getScaledInstance(MainImage.getWidth(),
+			MainImage.getHeight(),
 	    Image.SCALE_SMOOTH)));
 	    }
 	}else if(MainGUI.videoTypeList.contains(FilenameUtils.getExtension(src)) ){
@@ -65,31 +62,25 @@ public class ImageHandling{
 	    
 	    MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
 	    mediaPlayerComponent.mediaPlayer().media().play(src);
-	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass().getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
-	    mediaPlayerComponent.mediaPlayer().events().addMediaPlayerEventListener(new MediaPlayerEventListener(){
+	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass()
+		    .getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
+	    mediaPlayerComponent.mediaPlayer().events()
+		    .addMediaPlayerEventListener(new MediaPlayerEventListener(){
 
-		@Override
-		public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
-		}
-
-		@Override
-		public void opening(MediaPlayer mediaPlayer) {
-		}
-
-		@Override
-		public void buffering(MediaPlayer mediaPlayer, float newCache) {
-		}
+		
 
 		@Override
 		public void playing(MediaPlayer mediaPlayer) {
 		    
-		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
+		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass()
+			    .getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
 
 		}
 
 		@Override
 		public void paused(MediaPlayer mediaPlayer) {
-		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-play+icon-1320183326084518754_16.png")));
+		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass()
+			    .getResource("/download-icon-play+icon-1320183326084518754_16.png")));
 		}
 
 		@Override
@@ -98,31 +89,37 @@ public class ImageHandling{
 		    MainGUI.videoLengthTime.setText("00:00:00");
 		    MainGUI.videoSlider.setMaximum(0);
 		    MainGUI.videoSlider.setValue(0);
-		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download-icon-play+icon-1320183326084518754_16.png")));
-		}
-
-		@Override
-		public void forward(MediaPlayer mediaPlayer) {
-		}
-
-		@Override
-		public void backward(MediaPlayer mediaPlayer) {
-		}
-
-		@Override
-		public void finished(MediaPlayer mediaPlayer) {
-		    
+		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass()
+			    .getResource("/download-icon-play+icon-1320183326084518754_16.png")));
 		}
 
 		@Override
 		public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
 		    MainGUI.videoSlider.setValue((int)newTime);
-		    String formattedLength = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(newTime),
-		    TimeUnit.MILLISECONDS.toMinutes(newTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(newTime)),
-		    TimeUnit.MILLISECONDS.toSeconds(newTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(newTime)));
+		    String formattedLength = String.format("%02d:%02d:%02d",
+			    TimeUnit.MILLISECONDS.toHours(newTime),
+		    TimeUnit.MILLISECONDS.toMinutes(newTime) 
+			    - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(newTime)),
+		    TimeUnit.MILLISECONDS.toSeconds(newTime) 
+			    - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(newTime)));
 		    MainGUI.currentTime.setText(formattedLength);
 		}
+		
+		@Override
+		public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
+		    MainGUI.videoSlider.setMaximum((int)newLength);
+		    String formattedLength = String.format("%02d:%02d:%02d",
+			    TimeUnit.MILLISECONDS.toHours(newLength),
+		    TimeUnit.MILLISECONDS.toMinutes(newLength) 
+			    - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(newLength)),
+		    TimeUnit.MILLISECONDS.toSeconds(newLength) 
+			    - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(newLength)));
+		    
+		    MainGUI.videoLengthTime.setText(formattedLength);
 
+		    
+		}
+		
 		@Override
 		public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
 		}
@@ -142,16 +139,27 @@ public class ImageHandling{
 		@Override
 		public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
 		}
+		@Override
+		public void mediaChanged(MediaPlayer mediaPlayer, MediaRef media) {
+		}
 
 		@Override
-		public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
-		    MainGUI.videoSlider.setMaximum((int)newLength);
-		    String formattedLength = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(newLength),
-		    TimeUnit.MILLISECONDS.toMinutes(newLength) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(newLength)),
-		    TimeUnit.MILLISECONDS.toSeconds(newLength) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(newLength)));
-		    
-		    MainGUI.videoLengthTime.setText(formattedLength);
+		public void opening(MediaPlayer mediaPlayer) {
+		}
 
+		@Override
+		public void buffering(MediaPlayer mediaPlayer, float newCache) {
+		}
+		@Override
+		public void forward(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void backward(MediaPlayer mediaPlayer) {
+		}
+
+		@Override
+		public void finished(MediaPlayer mediaPlayer) {
 		    
 		}
 

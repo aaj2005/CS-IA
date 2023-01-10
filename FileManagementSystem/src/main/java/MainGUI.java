@@ -32,6 +32,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
 
+
+
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -307,22 +310,22 @@ public class MainGUI extends JFrame {
     
     
     ImageHandling imageHandler = new ImageHandling();
-    public static final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","flv","vob","ogv","ogg","drc","gif","gifv","mng","avi","MTS","M2TS","TS","mov","qt","wmv","yuv","rm","rmvb","viv","asf","amv","mp4","m4p","m4v","mpg","mp2","mpeg","mpe","mpv","mpg","mpeg","m2v","m4v","svi","3gp","3g2","mxf","roq","nsv", "flv","f4v","f4p","f4a","f4b"));
-    public static final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi","png","gif","webp","tiff","tif","raw","arw","cr2","nrw","psd","k25","bmp","dib","heif","heic","indd","ind","indt","jp2","j2k","jpf","jpx","jpm","mj2","svg","svgz","ai","eps"));
+    public static final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","vob","ogv","ogg"
+	    ,"drc","gif","mng","avi","mov","qt","wmv","amv","mp4","m4p","m4v","mpg","mpeg","m4v"));
+    public static final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi"
+	    ,"png","gif","webp","tiff","tif","arw","jp2","j2k","jpf","jpx","jpm"));
+    
+    
+    
+    
     public static final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
     public static File currentDirectory;
     
     
     public MainGUI() {
-	
-	
 	setSize(new Dimension(1920,1080));
-	
 	initComponents();
 	setLayout(new BorderLayout());
-	
-
-	
 	MainFileList.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	Basket.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 	MainGUI.Basket.setRootVisible(false);
@@ -331,11 +334,10 @@ public class MainGUI extends JFrame {
 	Basket.setEditable(false);
 	videoSlider.setEnabled(false);
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
-	
-	
-	
     }
     
+/////////////////////////DIRECTORY SEARCH/////////////////////////////////////////
+
     
     private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MainDirectorySearchActionPerformed
 	
@@ -348,41 +350,35 @@ public class MainGUI extends JFrame {
 	fileName.setText(null);
 	
 	try {
-	    currentDirectory = listManagerClass.addFolderContentToTree(MainFileList, evt, MainDirectorySearch);
+	    if ("ApproveSelection".equals(evt.getActionCommand())) {
+		JFileChooser chooser = (JFileChooser)evt.getSource();
+		currentDirectory = listManagerClass.addFolderContentToTree(MainFileList, chooser.getName(),chooser.getSelectedFile());
+		chooser.setCurrentDirectory(chooser.getSelectedFile());
+		System.out.println(evt.getSource().getClass());
+	    }else{
+		currentDirectory = ((JFileChooser)evt.getSource()).getCurrentDirectory();
+	    }
+	    
 	} catch (IOException ex) {
 	    Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	MainFileList.clearSelection();
 	MainFileList.repaint();
-	
+	System.out.println("tree called");
     }//GEN-LAST:event_MainDirectorySearchActionPerformed
 
+    
+/////////////////////////MAIN TREE AND BASKET MODIFICATIONS/////////////////////////////////////////    
+    
+    
+
     private void MainFileListValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_MainFileListValueChanged
-        System.out.println(evt.isAddedPath());
 	if(evt.isAddedPath()){
 	    Basket.clearSelection();
-	    if(getLastPathComponentObject().isInBasket()){
-		addToBasketButton.setText("-");
-	    }else{
-		addToBasketButton.setText("+");
-	    }
-	}
-	
-	
-	
-	
-	//System.out.println(MainListManager.fileMapList.size());
-	fileName.setText(getFileNameWithoutExtension(evt.getPath()));
-	/*if(getLastPathComponentObject().isInBasket()){
-	    addToBasketButton.setText("-");
-	}else{
 	    addToBasketButton.setText("+");
-	}*/
+	}
+	fileName.setText(getFileNameWithoutExtension(evt.getPath()));
 	imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
-	
-	
-	
-	
 	
     }//GEN-LAST:event_MainFileListValueChanged
   
@@ -392,14 +388,15 @@ public class MainGUI extends JFrame {
 	
 	if(evt.isAddedPath()){
 	    MainFileList.clearSelection();
+	    addToBasketButton.setText("-");
 	}
-	
-	
-	
-	
+
     }//GEN-LAST:event_BasketValueChanged
 	
-	
+
+    
+/////////////////////////BASKET MODIFICATION BUTTONS/////////////////////////////////////////
+    
 	
     private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyButtonActionPerformed
 
@@ -424,12 +421,7 @@ public class MainGUI extends JFrame {
 		MainFileList.setSelectionPath(oldPath);
 	    }else{
 		System.out.println("exists");
-	    }
-	    
-	    
-	    
-	    
-	    
+	    } 
 	}
 	
     }//GEN-LAST:event_ApplyButtonActionPerformed
@@ -439,7 +431,6 @@ public class MainGUI extends JFrame {
 	if (moveFileChooser.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION){
 	    if(MainFileList.getLastSelectedPathComponent()!=null){
 		if(!(new File(moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+MainFileList.getLastSelectedPathComponent()).isFile()) && (new File(getLastPathComponentObject().getAbsPath())).isFile()){
-		    System.out.println("here");
 
 		    try {
 			getLastPathComponentObject().moveFile(moveFileChooser.getSelectedFile().getAbsolutePath());
@@ -447,7 +438,6 @@ public class MainGUI extends JFrame {
 			Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 		    }
 		}else if(!(new File(moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+MainFileList.getLastSelectedPathComponent()).isDirectory())){
-		    System.out.println("true");
 		    try {
 			getLastPathComponentObject().moveFolder(moveFileChooser.getSelectedFile().getAbsolutePath());
 		    } catch (IOException ex) {
@@ -458,7 +448,7 @@ public class MainGUI extends JFrame {
 	    
 	    
 	    
-	    System.out.println(moveFileChooser.getSelectedFile());
+	    //System.out.println(moveFileChooser.getSelectedFile());
 	}
 	
     }//GEN-LAST:event_MoveButtonActionPerformed
@@ -467,13 +457,21 @@ public class MainGUI extends JFrame {
     private void addToBasketButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToBasketButtonActionPerformed
         if(!MainFileList.isSelectionEmpty()){
 	    
-	    BasketListManager.addToBasket((DefaultTreeModel)Basket.getModel());
-	    getLastPathComponentObject().setInBasket(true);
+	    try {
+		BasketListManager.addToBasket();
+		//setInBasket((DefaultMutableTreeNode)MainFileList.getLastSelectedPathComponent());
+		
+		//getLastPathComponentObject().setInBasket();
+	    } catch (IOException ex) {
+		Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	    
 	    
 	}else if(!Basket.isSelectionEmpty()){
 	    BasketListManager.removeFromBasket();
 	}
+	((DefaultTreeModel)Basket.getModel()).reload();
+	
 	
 	
 	
@@ -481,12 +479,30 @@ public class MainGUI extends JFrame {
     }//GEN-LAST:event_addToBasketButtonActionPerformed
     
     
-
+    
+    
+    
     private void MoveBasketButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveBasketButtonActionPerformed
-        // TODO add your handling code here:
+        if (MainGUI.moveFileChooser.showDialog(MainGUI.getWindows()[0], "Select") == JFileChooser.APPROVE_OPTION){
+	    try {
+		BasketListManager.moveFiles(moveFileChooser.getSelectedFile(), ((DefaultMutableTreeNode)MainGUI.Basket.getModel().getRoot()));
+	    } catch (IOException ex) {
+		Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+	    }
+	    
+	}
+	
     }//GEN-LAST:event_MoveBasketButtonActionPerformed
     
     
+    
+    
+    
+    
+    
+    
+    
+/////////////////////////MEDIA CONTROLLER STUFF/////////////////////////////////////////
 	
 	private void pausePlayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausePlayButtonActionPerformed
         ImageHandling.mediaPlayerComponent.mediaPlayer().controls().pause();
@@ -518,7 +534,7 @@ public class MainGUI extends JFrame {
 	
 	
 	
-	
+/////////////////////////CUSTOM FUNCTIONS/////////////////////////////////////////	
 	
     public FileClass getLastPathComponentObject(){
 	return ((FileClass)((DefaultMutableTreeNode)MainFileList.getLastSelectedPathComponent()).getUserObject());
@@ -561,11 +577,6 @@ public class MainGUI extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -582,10 +593,8 @@ public class MainGUI extends JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the GUI */
 	
 	
         java.awt.EventQueue.invokeLater(new Runnable(){
@@ -614,7 +623,7 @@ public class MainGUI extends JFrame {
     public static javax.swing.JButton addToBasketButton;
     public static javax.swing.JLabel currentTime;
     private javax.swing.JTextField fileName;
-    private javax.swing.JFileChooser moveFileChooser;
+    public static javax.swing.JFileChooser moveFileChooser;
     public static javax.swing.JButton pausePlayButton;
     public static javax.swing.JLabel videoLengthTime;
     public static javax.swing.JSlider videoSlider;
