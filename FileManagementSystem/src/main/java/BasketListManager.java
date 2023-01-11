@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -23,6 +24,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import org.apache.commons.io.FilenameUtils;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -39,7 +41,6 @@ public class BasketListManager{
 
     JPanel renderer;
 
-    DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
     
     static TreeInsertionManager treeInserter = new TreeInsertionManager();
     
@@ -96,52 +97,71 @@ public class BasketListManager{
 	MainGUI.addToBasketButton.setText("+");
     }
     private static void removeParentPath(TreePath parentPath, DefaultTreeModel model){
+	System.out.println(parentPath);
+	if(!((DefaultMutableTreeNode)parentPath.getLastPathComponent()).equals((DefaultMutableTreeNode)model.getRoot())){
+	    model.removeNodeFromParent((DefaultMutableTreeNode)parentPath.getLastPathComponent());
+	    return;
+	}
 	DefaultMutableTreeNode node = (DefaultMutableTreeNode)(parentPath.getLastPathComponent());
-	if(node.isLeaf() || node.getDepth()==1 && node.getChildAt(0).isLeaf()){
+	
+	if(node.isLeaf() || (node.getDepth()==1 && node.getChildAt(0).isLeaf())){
 	    //System.out.println((DefaultMutableTreeNode)parentPath.getParent());
 	    removeParentPath(parentPath.getParentPath(),model);
 	    
 	}
-	System.out.println((DefaultMutableTreeNode)parentPath.getLastPathComponent());
-	if(!((DefaultMutableTreeNode)parentPath.getLastPathComponent()).equals((DefaultMutableTreeNode)model.getRoot())){
-	    model.removeNodeFromParent((DefaultMutableTreeNode)parentPath.getLastPathComponent());
-	}
+	//System.out.println((DefaultMutableTreeNode)parentPath.getLastPathComponent());
+	
 	
     }
     public static void moveFiles(File destination, DefaultMutableTreeNode root) throws IOException{
-	
-	
-	
 	    
-	    
-	    System.out.println("I CAME HERE!!");
 	    for(int path=0; path<root.getChildCount();path++){
-		System.out.println(destination.getAbsolutePath()+"\\"+root.getChildAt(path));
-		
-		//System.out.println(((FileClass)(((DefaultMutableTreeNode)(root.getChildAt(path)))).getUserObject()).getAbsPath());
-		//System.out.println(new File(MainGUI.moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+root.getChildAt(path)).exists());
-		
-	    
 		File destinationFile = new File(destination.getAbsolutePath()+"\\"+root.getChildAt(path));
 		FileClass fileProperties = (FileClass)(((DefaultMutableTreeNode)(root.getChildAt(path)))).getUserObject();
 		File currentFile = new File((fileProperties.getAbsPath()));
 		System.out.println(destinationFile.exists());
 		if(!(destinationFile.exists()) && (currentFile.exists())){
-		   // System.out.println("here");
+		   
 		    if(currentFile.isDirectory()){
 			destinationFile.mkdir();
 			moveFiles(destinationFile,(DefaultMutableTreeNode)root.getChildAt(path));
 		    }else{
 			fileProperties.moveFile(destination.getAbsolutePath());
 		    }
-		    System.out.println("here");
-		    //MainGUI.Basket.getLastPathComponentObject().moveFile(MainGUI.moveFileChooser.getSelectedFile().getAbsolutePath());
-		}else if(!(new File(MainGUI.moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+MainGUI.MainFileList.getLastSelectedPathComponent()).isDirectory())){
-		    return;
-		    //getLastPathComponentObject().moveFolder(moveFileChooser.getSelectedFile().getAbsolutePath());
 		}else{
 		    System.out.println("duplicate exists");
-		    return;
+		    int approve = JOptionPane.showConfirmDialog(MainGUI.getWindows()[0],"Error! "+ destination.getName()+"\\"+root.getChildAt(path)+" already exists. Would you like to rename it?");
+		    if(JOptionPane.YES_OPTION==approve){
+			
+			boolean successRename = false;
+			while(!successRename){
+			    String renamedFile = JOptionPane.showInputDialog("File Name:");
+			    if(renamedFile==null){
+				return;
+			    }
+			    if(currentFile.isDirectory()){
+				destinationFile = new File(destination.getAbsolutePath()+"\\"+renamedFile);
+			    }else{
+				destinationFile = new File(destination.getAbsolutePath()+"\\"+renamedFile+"."+FilenameUtils.getExtension(currentFile.toString()));
+			    }
+			    System.out.println(destination.getAbsolutePath()+"\\"+renamedFile+"."+FilenameUtils.getExtension(currentFile.toString()));
+			    if(!(destinationFile.exists()) && currentFile.exists()){
+				successRename = true;
+				destinationFile = new File(destination.getAbsolutePath()+"\\"+renamedFile);
+				System.out.println("reached here "+destinationFile.getAbsolutePath());
+				if(currentFile.isDirectory()){
+				    destinationFile.mkdir();
+				    moveFiles(destinationFile,(DefaultMutableTreeNode)root.getChildAt(path));
+				}else{
+				    fileProperties.moveFile(destination.getAbsolutePath());
+				}
+			    }
+			}
+			
+		    }else{
+			return;
+		    }
+		    
 		}
 		
 		System.out.println("\n\n");
