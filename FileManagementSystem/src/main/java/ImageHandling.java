@@ -3,9 +3,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -115,9 +112,7 @@ public class ImageHandling{
 		    TimeUnit.MILLISECONDS.toSeconds(newLength) 
 			    - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(newLength)));
 		    
-		    MainGUI.videoLengthTime.setText(formattedLength);
-
-		    
+		    MainGUI.videoLengthTime.setText(formattedLength);    
 		}
 		
 		@Override

@@ -1,33 +1,17 @@
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.ScrollPaneLayout;
-import javax.swing.event.CellEditorListener;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
@@ -315,9 +299,6 @@ public class MainGUI extends JFrame {
     public static final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi"
 	    ,"png","gif","webp","tiff","tif","arw","jp2","j2k","jpf","jpx","jpm"));
     
-    
-    
-    
     public static final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
     public static File currentDirectory;
     
@@ -341,20 +322,16 @@ public class MainGUI extends JFrame {
     
     private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MainDirectorySearchActionPerformed
 	
-	
 	TreeInsertionManager listManagerClass = new TreeInsertionManager();
-	
-	
-	
 	MainImage.setIcon(null);
 	fileName.setText(null);
 	
 	try {
 	    if ("ApproveSelection".equals(evt.getActionCommand())) {
 		JFileChooser chooser = (JFileChooser)evt.getSource();
-		currentDirectory = listManagerClass.addFolderContentToTree(MainFileList, chooser.getName(),chooser.getSelectedFile());
+		currentDirectory = listManagerClass.addFolderContentToTree(MainFileList,
+			chooser.getName(),chooser.getSelectedFile());
 		chooser.setCurrentDirectory(chooser.getSelectedFile());
-		System.out.println(evt.getSource().getClass());
 	    }else{
 		currentDirectory = ((JFileChooser)evt.getSource()).getCurrentDirectory();
 	    }
@@ -364,7 +341,6 @@ public class MainGUI extends JFrame {
 	}
 	MainFileList.clearSelection();
 	MainFileList.repaint();
-	System.out.println("tree called");
     }//GEN-LAST:event_MainDirectorySearchActionPerformed
 
     
@@ -401,29 +377,52 @@ public class MainGUI extends JFrame {
     private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyButtonActionPerformed
 
 	if(!"null".equals(MainFileList.getSelectionPath().toString())){
-	    //System.out.println(fileName.getText());
 	    File originalFile = new File(treePathCombiner(MainFileList.getSelectionPath(),0));
 	    
 	    TreePath oldPath = MainFileList.getSelectionPath();
-	    String newFileName = treePathCombiner(MainFileList.getSelectionPath(),1)+"\\"+fileName.getText()+"."+FilenameUtils.getExtension(originalFile.toString());
-	    File renamedFile = new File(newFileName);
-	    
-	    
-	    
-	    
+	    String newFileName = treePathCombiner(MainFileList.getSelectionPath(),1)
+		    +"\\";
+	    File renamedFile = new File(newFileName+fileName.getText()+"."+FilenameUtils
+		    .getExtension(originalFile.toString()));
 	    boolean flag = originalFile.renameTo(renamedFile);
 	    if (flag == true) {
 		DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel();
-		DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList.getSelectionPath().getPath()[MainFileList.getSelectionPath().getPath().length-1];
-		childNode.setUserObject(fileName.getText()+"."+FilenameUtils.getExtension(originalFile.toString()));
+		DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList.getSelectionPath().getPath()
+			[MainFileList.getSelectionPath().getPath().length-1];
+		FileClass child = (FileClass)childNode.getUserObject();
+		child.setFileNameDirectory(renamedFile.getName(), renamedFile.getAbsolutePath());
 		model.nodeChanged(childNode);
 		MainFileList.setModel(model);
 		MainFileList.setSelectionPath(oldPath);
 	    }else{
-		System.out.println("exists");
+		int approve = JOptionPane.showConfirmDialog(MainGUI.getWindows()[0],"Error! Name already exists. "
+			+ "Would you like to rename it?");
+		if(JOptionPane.YES_OPTION==approve){
+			boolean successRename = false;
+			while(!successRename){
+			    renamedFile = new File(newFileName + JOptionPane.showInputDialog("File Name:")
+				    + "."+FilenameUtils
+				    .getExtension(originalFile.toString()));
+			    successRename = originalFile.renameTo(renamedFile);
+			    if(renamedFile==null){
+				return;
+			    }
+			    if(successRename){
+				DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel();
+				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList
+					.getSelectionPath().getPath()
+				    [MainFileList.getSelectionPath().getPath().length-1];
+				FileClass child = (FileClass)childNode.getUserObject();
+				child.setFileNameDirectory(renamedFile.getName(), renamedFile.getAbsolutePath());
+				model.nodeChanged(childNode);
+				MainFileList.setModel(model);
+				MainFileList.setSelectionPath(oldPath);
+			    }
+			}
+			
+		    }
 	    } 
 	}
-	
     }//GEN-LAST:event_ApplyButtonActionPerformed
 
     private void MoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveButtonActionPerformed

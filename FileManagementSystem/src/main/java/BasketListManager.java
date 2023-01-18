@@ -1,29 +1,13 @@
 
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.EventObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellEditor;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
 
 /*
@@ -46,34 +30,28 @@ public class BasketListManager{
     
     public static void addToBasket() throws IOException{
 	DefaultTreeModel BasketTreeModel = (DefaultTreeModel) MainGUI.Basket.getModel();
-//    DefaultMutableTreeNode componentAdded
-	//MainGUI.MainFileList.getSelectionPath().getPath();
-	Enumeration e = ((DefaultMutableTreeNode)((DefaultTreeModel)(MainGUI.Basket.getModel())).getRoot()).breadthFirstEnumeration();
+	Enumeration e = ((DefaultMutableTreeNode)((DefaultTreeModel)(MainGUI.Basket.getModel()))
+		.getRoot()).breadthFirstEnumeration();
 	int counter = 1;
 	e.nextElement();
 	FileClass nextFile;
-	FileClass currentFile = (FileClass)((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject();
+	FileClass currentFile = (FileClass)((DefaultMutableTreeNode)MainGUI.MainFileList
+		.getLastSelectedPathComponent())
+		.getUserObject();
 	while(e.hasMoreElements()){
 	    nextFile = (FileClass)((DefaultMutableTreeNode)e.nextElement()).getUserObject();
 	    if(nextFile.getAbsPath().equals(currentFile.getAbsPath())){
 		return;
 	    }
-	    //if(MainGUI.MainFileList.getSelectionPath().getPath()[])
 	}
-	
-	
-	
-	//System.out.println(((DefaultMutableTreeNode)BasketTreeModel.getRoot()));
-	System.out.println(((FileClass)((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject()).getAbsPath());
-	FileClass selectedFile = ((FileClass)((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject());
+	FileClass selectedFile = ((FileClass)((DefaultMutableTreeNode)MainGUI.MainFileList
+		.getLastSelectedPathComponent()).getUserObject());
 	treeInserter.addFolderToBasket(MainGUI.Basket,selectedFile.getAbsPath() , new File(selectedFile.getAbsPath()));
-	//((DefaultMutableTreeNode)BasketTreeModel.getRoot()).add(new DefaultMutableTreeNode(());
-	System.out.println(((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject());
 	
-	((DefaultMutableTreeNode)((DefaultMutableTreeNode)BasketTreeModel.getRoot()).getLastChild()).setUserObject((FileClass)(((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject()));
-	//BasketTreeModel.reload();
+	((DefaultMutableTreeNode)((DefaultMutableTreeNode)BasketTreeModel.getRoot()).getLastChild())
+		.setUserObject((FileClass)(((DefaultMutableTreeNode)MainGUI
+			.MainFileList.getLastSelectedPathComponent()).getUserObject()));
 	MainGUI.Basket.setModel(BasketTreeModel);
-	//MainGUI.Basket.setSelectionPath(new TreePath(((DefaultMutableTreeNode)MainGUI.Basket.getModel().getRoot()).getLastLeaf().getPath()));
     }
     
     public static void removeFromBasket(){
@@ -113,15 +91,15 @@ public class BasketListManager{
 	
 	
     }
+    
     public static void moveFiles(File destination, DefaultMutableTreeNode root) throws IOException{
 	    
 	    for(int path=0; path<root.getChildCount();path++){
 		File destinationFile = new File(destination.getAbsolutePath()+"\\"+root.getChildAt(path));
-		FileClass fileProperties = (FileClass)(((DefaultMutableTreeNode)(root.getChildAt(path)))).getUserObject();
+		FileClass fileProperties = (FileClass)
+			(((DefaultMutableTreeNode)(root.getChildAt(path)))).getUserObject();
 		File currentFile = new File((fileProperties.getAbsPath()));
-		System.out.println(destinationFile.exists());
 		if(!(destinationFile.exists()) && (currentFile.exists())){
-		   
 		    if(currentFile.isDirectory()){
 			destinationFile.mkdir();
 			moveFiles(destinationFile,(DefaultMutableTreeNode)root.getChildAt(path));
@@ -129,10 +107,10 @@ public class BasketListManager{
 			fileProperties.moveFile(destination.getAbsolutePath());
 		    }
 		}else{
-		    System.out.println("duplicate exists");
-		    int approve = JOptionPane.showConfirmDialog(MainGUI.getWindows()[0],"Error! "+ destination.getName()+"\\"+root.getChildAt(path)+" already exists. Would you like to rename it?");
+		    int approve = JOptionPane.showConfirmDialog(MainGUI.getWindows()[0],"Error! "
+			    + destination.getName()
+			    +"\\"+root.getChildAt(path)+" already exists. Would you like to rename it?");
 		    if(JOptionPane.YES_OPTION==approve){
-			
 			boolean successRename = false;
 			while(!successRename){
 			    String renamedFile = JOptionPane.showInputDialog("File Name:");
@@ -142,13 +120,12 @@ public class BasketListManager{
 			    if(currentFile.isDirectory()){
 				destinationFile = new File(destination.getAbsolutePath()+"\\"+renamedFile);
 			    }else{
-				destinationFile = new File(destination.getAbsolutePath()+"\\"+renamedFile+"."+FilenameUtils.getExtension(currentFile.toString()));
+				destinationFile = new File(destination.getAbsolutePath()+"\\"+renamedFile+"."+FilenameUtils
+					.getExtension(currentFile.toString()));
 			    }
-			    System.out.println(destination.getAbsolutePath()+"\\"+renamedFile+"."+FilenameUtils.getExtension(currentFile.toString()));
 			    if(!(destinationFile.exists()) && currentFile.exists()){
 				successRename = true;
 				destinationFile = new File(destination.getAbsolutePath()+"\\"+renamedFile);
-				System.out.println("reached here "+destinationFile.getAbsolutePath());
 				if(currentFile.isDirectory()){
 				    destinationFile.mkdir();
 				    moveFiles(destinationFile,(DefaultMutableTreeNode)root.getChildAt(path));
@@ -157,15 +134,10 @@ public class BasketListManager{
 				}
 			    }
 			}
-			
 		    }else{
 			return;
-		    }
-		    
-		}
-		
-		System.out.println("\n\n");
-	   
+		    }   
+		}	   
 	    }
 	    
 	    

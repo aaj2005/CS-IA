@@ -8,14 +8,10 @@
  * @author alial
  */
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.ImageIcon;
 ///*import java.util.Enumeration;
 //import java.util.zip.ZipEntry;
-//import java.util.zip.ZipFile;*/
-import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -71,10 +67,7 @@ public class TreeInsertionManager{
 				true));
 
 	    getFileNames(selectedFile, (DefaultMutableTreeNode)upperRoot.getLastChild());
-	}
-	
-	
-	    
+	}    
 	treeModel.reload();
 	FileTree.setModel(treeModel);
     }

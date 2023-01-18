@@ -1,12 +1,6 @@
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Stack;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.io.FileUtils;
@@ -44,8 +38,6 @@ public class FileClass{
 	this.parentPath = parentPath.getAbsolutePath();
 	this.isDirectory = isDirectory;
     }
-
-    
     
     public void moveFolder(String dir2) throws IOException{
 	File initialDir = new File(absPath);
@@ -73,6 +65,11 @@ public class FileClass{
     }
     public boolean isDirectory(){
 	return this.isDirectory;
+    }
+    
+    public void setFileNameDirectory(String filename, String fileDirectory){
+	absPath = fileDirectory;
+	this.filename = filename;
     }
   
 }
