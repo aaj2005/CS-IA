@@ -27,45 +27,55 @@ import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
  * @author alial
  */
 public class ImageHandling{
-   static EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent(); 
+    
+    //initialize the media player component to display videos
+    public static EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent(); 
+    
+    //constructor
     public ImageHandling(){
 	
     }
     
+    //update the image/video displayed
     public void setImage(String src, JLabel MainImage) throws IOException, InterruptedException{
-	int type = BufferedImage.TYPE_INT_ARGB;
+	//if a directory is selected exit
 	if(new File(src).isDirectory()){
 
+	//if an image file is selected
 	}else if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(src)) ){
+	    //read the image file as a buffered image
 	    BufferedImage img = ImageIO.read(new File(src));
+	    //stop video if it is playing
 	    if(isPlaying()){mediaPlayerComponent.mediaPlayer().controls().stop();}
-	    
+	    //disable video slider and pause/play buttons
 	    MainGUI.videoSlider.setEnabled(false);
 	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass()
 		    .getResource("/download-icon-play+icon-1320183326084518754_16.png")));
 	    MainImage.removeAll();
-	    
+	    //image resizing and rescaling
 	    if (img.getWidth() < MainImage.getWidth()/1.5 && img.getHeight() <MainImage.getHeight()/1.5){
 		MainImage.setIcon(new ImageIcon(img));
 	    }else{
 		MainImage.setIcon(new ImageIcon(img.getScaledInstance(MainImage.getWidth(),
 			MainImage.getHeight(),
-	    Image.SCALE_SMOOTH)));
+			Image.SCALE_SMOOTH)));
 	    }
+	//if a video file is selected
 	}else if(MainGUI.videoTypeList.contains(FilenameUtils.getExtension(src)) ){
+	    //stop existing video from playing and enable video slider
 	    if(isPlaying()){mediaPlayerComponent.mediaPlayer().controls().stop();}
 	    MainGUI.videoSlider.setEnabled(true);
 	    MainImage.setLayout(new BorderLayout());
-	    
+	    //insert video component into the frame
 	    MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
 	    mediaPlayerComponent.mediaPlayer().media().play(src);
 	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass()
 		    .getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
 	    mediaPlayerComponent.mediaPlayer().events()
 		    .addMediaPlayerEventListener(new MediaPlayerEventListener(){
-
+		//interface implementation for all video properties 
 		
-
+		//runs when the video is playing
 		@Override
 		public void playing(MediaPlayer mediaPlayer) {
 		    
@@ -73,13 +83,15 @@ public class ImageHandling{
 			    .getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
 
 		}
-
+		
+		//runs when the video is paused
 		@Override
 		public void paused(MediaPlayer mediaPlayer) {
 		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass()
 			    .getResource("/download-icon-play+icon-1320183326084518754_16.png")));
 		}
-
+		
+		//runs when the video is stopped
 		@Override
 		public void stopped(MediaPlayer mediaPlayer) {
 		    MainGUI.currentTime.setText("00:00:00");
@@ -89,7 +101,8 @@ public class ImageHandling{
 		    MainGUI.pausePlayButton.setIcon(new javax.swing.ImageIcon(getClass()
 			    .getResource("/download-icon-play+icon-1320183326084518754_16.png")));
 		}
-
+		
+		//runs when the video time is updated
 		@Override
 		public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
 		    MainGUI.videoSlider.setValue((int)newTime);
@@ -102,6 +115,7 @@ public class ImageHandling{
 		    MainGUI.currentTime.setText(formattedLength);
 		}
 		
+		//runs when the video's length is changed (video is changed)
 		@Override
 		public void lengthChanged(MediaPlayer mediaPlayer, long newLength) {
 		    MainGUI.videoSlider.setMaximum((int)newLength);
@@ -205,45 +219,42 @@ public class ImageHandling{
 		@Override
 		public void mediaPlayerReady(MediaPlayer mediaPlayer) {
 		}
-
-	    });
-	    
-	    
-	    
+	    });   
 	}
-	
     }
+    
+    //stop current video
     public static void stopAll(){
 	if(isPlaying()){mediaPlayerComponent.mediaPlayer().controls().stop();}
 	MainGUI.MainImage.setIcon(new ImageIcon());
     }
+    
+    //pause/play video
     public static void pausePlay(){
 	 mediaPlayerComponent.mediaPlayer().controls().pause();
-	
-	
     }
     
+    //seek/advance to specific time
     public static void changeTime(long time){
 	mediaPlayerComponent.mediaPlayer().controls().setTime(time);
 	
     }
+    
+    //check if video is playing
     public static boolean isPlaying(){
-	
 	return mediaPlayerComponent.mediaPlayer().status().isPlaying();
     }
     
+    //play the video
     public static void play(){
 	mediaPlayerComponent.paused(mediaPlayerComponent.mediaPlayer());
 	MainGUI.MainImage.setLayout(new BorderLayout());
-
-	MainGUI.MainImage.add(mediaPlayerComponent, BorderLayout.CENTER);
-	   
-	mediaPlayerComponent.mediaPlayer().media().play("");
-
-	   
+	MainGUI.MainImage.add(mediaPlayerComponent, BorderLayout.CENTER); 
+	mediaPlayerComponent.mediaPlayer().media().play(""); 
     }
+    
+    //gateway function to view images/videos
     public void handler(String src, JLabel MainImage){
-	
 	try {
 	    setImage(src, MainImage);
 	} catch (IOException ex) {

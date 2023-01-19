@@ -10,46 +10,48 @@
 
 import java.io.File;
 import java.io.IOException;
-///*import java.util.Enumeration;
-//import java.util.zip.ZipEntry;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.io.FilenameUtils;
 
 
 public class TreeInsertionManager{
-    DefaultTreeModel treeModel;
-    DefaultMutableTreeNode placeHolderNode;
-    TreeNode root;
     
+    DefaultTreeModel treeModel;//general tree model
+    
+    //initialize constructer
     public TreeInsertionManager() {        
         
     }
     
 
        
-
+    //method called when folders are inserted into main visible file list
     public File addFolderContentToTree(JTree FileTree, String Path,File selectedFile) throws IOException{
             
-	    
+	    //get tree root
 	    treeModel = (DefaultTreeModel) FileTree.getModel();
 	    treeModel.setRoot(new DefaultMutableTreeNode(selectedFile.getName()));
-            getFileNames(selectedFile, (DefaultMutableTreeNode)treeModel.getRoot());
-	    
-	    //treeModel.reload(root);
+            //add files to tree
+	    getFileNames(selectedFile, (DefaultMutableTreeNode)treeModel.getRoot());
+	    //refresh and update tree model
 	    treeModel.reload();
 	    FileTree.setModel(treeModel);
 	    return MainGUI.MainDirectorySearch.getSelectedFile();
 	
     }
+    
+    //method called when folders are inserted into basket
     public void addFolderToBasket(JTree FileTree, String Path,File selectedFile) throws IOException{
+	//get tree model and root
 	treeModel = (DefaultTreeModel) FileTree.getModel();
-	
 	DefaultMutableTreeNode upperRoot = ((DefaultMutableTreeNode)(treeModel.getRoot()));
+	
+	//for files
 	if(selectedFile.isFile()){
+	    //add node and add filelass metadata/properties
 	    upperRoot.add(new DefaultMutableTreeNode(selectedFile.getName()));
 	    upperRoot.getLastLeaf().setUserObject(new FileClass(selectedFile.getName(),
 				selectedFile.getAbsolutePath(),
@@ -57,7 +59,9 @@ public class TreeInsertionManager{
 				new TreePath(upperRoot.getLastLeaf().getPath()),
 				MainGUI.MainDirectorySearch.getSelectedFile(),
 				false));
+	//for directories
 	}else{
+	    //add folder name and set metadata
 	    upperRoot.add(new DefaultMutableTreeNode(selectedFile.getName()));
 	    upperRoot.getLastLeaf().setUserObject(new FileClass(selectedFile.getName(),
 				selectedFile.getAbsolutePath(),
@@ -65,7 +69,7 @@ public class TreeInsertionManager{
 				new TreePath(upperRoot.getLastLeaf().getPath()),
 				MainGUI.MainDirectorySearch.getSelectedFile(),
 				true));
-
+	    //add subfolders
 	    getFileNames(selectedFile, (DefaultMutableTreeNode)upperRoot.getLastChild());
 	}    
 	treeModel.reload();
@@ -73,80 +77,46 @@ public class TreeInsertionManager{
     }
     
     
-    
-    public File getFileNames(File folder, DefaultMutableTreeNode rootNode) throws IOException {
-        File[] fileList;
+    //retrieve files/folders from system and insert into tree
+    public void getFileNames(File folder, DefaultMutableTreeNode rootNode) throws IOException {
+        //retrieve subfolders and files
+	File[] fileList;
 	fileList = folder.listFiles();
-	
-	
         if (fileList == null) {
 	    
         }
-            for (final File file : fileList ) {
-		    if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString())) ||
-			    MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-			
-			rootNode.add(new DefaultMutableTreeNode(file.getName()));
-			rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(),
-				file.getAbsolutePath(),
-				rootNode,
-				new TreePath(rootNode.getLastLeaf().getPath()),
-				MainGUI.MainDirectorySearch.getSelectedFile(),
-				false));
-			
-		    }else if( file.isDirectory() && file.list()!=null){
-			    rootNode.add(new DefaultMutableTreeNode(file.getName()));
-			    File subFiles = new File(file.toString());
-			    rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(),
-				    file.getAbsolutePath(),
-				    rootNode,
-				    new TreePath(rootNode.getLastLeaf().getPath()),
-				    MainGUI.MainDirectorySearch.getSelectedFile(),
-				    false));
-			    getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
-			    if(rootNode.getLastChild().getChildCount()==0){
-				rootNode.remove(rootNode.getChildCount()-1);
-			    }
-		    }
-            }
-	    root = rootNode;
-	return null;
+	//loop through the filelist array
+	for (final File file : fileList ) {
+	    //if file is an image or video
+	    if(MainGUI.imageTypeList.contains(FilenameUtils.getExtension(file.toString())) ||
+		    MainGUI.videoTypeList.contains(FilenameUtils.getExtension(file.toString()))){
+		//add media file to tree and set metadata/properties
+		rootNode.add(new DefaultMutableTreeNode(file.getName()));
+		rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(),
+			file.getAbsolutePath(),
+			rootNode,
+			new TreePath(rootNode.getLastLeaf().getPath()),
+			MainGUI.MainDirectorySearch.getSelectedFile(),
+			false));
+	    //if it is a directory
+	    }else if( file.isDirectory() && file.list()!=null){
+		//add folder to tree and its properties
+		rootNode.add(new DefaultMutableTreeNode(file.getName()));
+		File subFiles = new File(file.toString());
+		rootNode.getLastLeaf().setUserObject(new FileClass(file.getName(),
+			file.getAbsolutePath(),
+			rootNode,
+			new TreePath(rootNode.getLastLeaf().getPath()),
+			MainGUI.MainDirectorySearch.getSelectedFile(),
+			false));
+		//set the folder as the root node and recurse to retrieve subfolders
+		getFileNames(subFiles, (DefaultMutableTreeNode) rootNode.getLastChild());
+		//remove extra child node that is added in the process
+		if(rootNode.getLastChild().getChildCount()==0){
+		    rootNode.remove(rootNode.getChildCount()-1);
+		}
+	    }
+	}
     }
     
 }
-
-/*else if(MainGUI.zipTypeList.contains(FilenameUtils.getExtension(file.toString()))){
-			//rootNode.add(new DefaultMutableTreeNode(file.getName()));
-			//fileMapList.put(file.getName(), file);
-			
-			MainGUI.MainFileList.setCellRenderer(new DefaultTreeCellRenderer() {
-			
-			@Override
-			public Component getTreeCellRendererComponent(JTree tree,
-				Object value, boolean selected, boolean expanded,
-				boolean isLeaf, int row, boolean focused) {
-			    Component c = super.getTreeCellRendererComponent(tree, value,
-				    selected, expanded, isLeaf, row, focused);
-			    setIcon(icon);
-			    return c;
-			}
-			});
-		    }*/
-
-
-
-
-
-
-
-
-//          File[] roots = File.listRoots();
-//          getFileNames(new File("C:\\Users\\alial\\Desktop\\Programs\\Java\\Zip"));
-//          ZipFile zipFile = new ZipFile("C:\\Users\\alial\\Desktop\\Programs\\Java\\Zip\\compressjpeg (1).zip");
-//          Enumeration<? extends ZipEntry> entries = zipFile.entries();
-//          while(entries.hasMoreElements()){
-//              ZipEntry entry = entries.nextElement();
-//              InputStream stream = zipFile.getInputStream(entry);
-//              getFileNames(stream);
-//          }
-//            System.out.println(count);

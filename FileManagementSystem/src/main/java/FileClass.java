@@ -16,20 +16,14 @@ import org.apache.commons.io.FileUtils;
  */
 public class FileClass{
     
+    //attributes of file
     private String filename;
     private String absPath;    
     private String parentPath;
-    private long size;
-    private String datemod;
-    private String datecreated;
-    private boolean hidden;
-    private boolean readonly;
-    private String type;
-    private int dimLength;
-    private int dimWidth;
     private TreePath FilePath;
     private boolean isDirectory;
     
+    //constructor to initialize attributes
     public FileClass(String filename, String path, DefaultMutableTreeNode rootFolder, TreePath FilePath,
 	    File parentPath, boolean isDirectory){
 	this.filename = filename;
@@ -39,34 +33,42 @@ public class FileClass{
 	this.isDirectory = isDirectory;
     }
     
+    //move a directory
     public void moveFolder(String dir2) throws IOException{
 	File initialDir = new File(absPath);
 	File finalDir = new File(dir2);
 	FileUtils.moveDirectoryToDirectory(initialDir, finalDir,false);
     }
     
+    //get file path
     public TreePath getFilePath(){
 	return FilePath;
     }
     
+    //move file
     public void moveFile(String dir2) throws IOException{
 	File initialDir = new File(absPath);
 	File finalDir = new File(dir2);
 	FileUtils.moveFileToDirectory(initialDir, finalDir,false);
     }
 
+    //get full file path
     public String getAbsPath() {
 	return absPath;
     }
     
+    //get file name
     @Override
     public String toString(){
 	return filename;
     }
+    
+    //check if file is directory
     public boolean isDirectory(){
 	return this.isDirectory;
     }
     
+    //update file name
     public void setFileNameDirectory(String filename, String fileDirectory){
 	absPath = fileDirectory;
 	this.filename = filename;

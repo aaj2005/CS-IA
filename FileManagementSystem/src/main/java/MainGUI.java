@@ -67,6 +67,7 @@ public class MainGUI extends JFrame {
         currentTime = new javax.swing.JLabel();
         addToBasketButton = new javax.swing.JButton();
         MoveBasketButton = new javax.swing.JButton();
+        clearBasketButton = new javax.swing.JButton();
 
         moveFileChooser.setCurrentDirectory(new java.io.File("D:\\"));
             moveFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
@@ -201,6 +202,14 @@ public class MainGUI extends JFrame {
                 }
             });
 
+            clearBasketButton.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+            clearBasketButton.setText("Clear");
+            clearBasketButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    clearBasketButtonActionPerformed(evt);
+                }
+            });
+
             javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
             getContentPane().setLayout(layout);
             layout.setHorizontalGroup(
@@ -221,7 +230,9 @@ public class MainGUI extends JFrame {
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(addToBasketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(18, 18, 18)
-                                            .addComponent(MoveBasketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addComponent(MoveBasketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(clearBasketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addGap(0, 0, Short.MAX_VALUE))))
                         .addComponent(VisibleFilesTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -267,7 +278,8 @@ public class MainGUI extends JFrame {
                                 .addComponent(BasketLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(addToBasketButton)
-                                    .addComponent(MoveBasketButton)))
+                                    .addComponent(MoveBasketButton))
+                                .addComponent(clearBasketButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(BaskScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -319,23 +331,24 @@ public class MainGUI extends JFrame {
     
 /////////////////////////DIRECTORY SEARCH/////////////////////////////////////////
 
-    
+//Executed when users click "select folder in the file chooser"    
     private void MainDirectorySearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MainDirectorySearchActionPerformed
 	
+	//creating an instance of the tree manager class
 	TreeInsertionManager listManagerClass = new TreeInsertionManager();
+	//resetting the image and file name in the textbox
 	MainImage.setIcon(null);
 	fileName.setText(null);
-	
 	try {
+	    //check if user clicked "select folder"
 	    if ("ApproveSelection".equals(evt.getActionCommand())) {
-		JFileChooser chooser = (JFileChooser)evt.getSource();
+		JFileChooser chooser = (JFileChooser)evt.getSource(); //get directory from event
 		currentDirectory = listManagerClass.addFolderContentToTree(MainFileList,
-			chooser.getName(),chooser.getSelectedFile());
-		chooser.setCurrentDirectory(chooser.getSelectedFile());
+			chooser.getName(),chooser.getSelectedFile()); //populate the tree
+		chooser.setCurrentDirectory(chooser.getSelectedFile()); //update current directory
 	    }else{
 		currentDirectory = ((JFileChooser)evt.getSource()).getCurrentDirectory();
 	    }
-	    
 	} catch (IOException ex) {
 	    Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -347,46 +360,53 @@ public class MainGUI extends JFrame {
 /////////////////////////MAIN TREE AND BASKET MODIFICATIONS/////////////////////////////////////////    
     
     
-
+//when user interacts with visible file list tree
     private void MainFileListValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_MainFileListValueChanged
+	//ensure that the two trees are accessed separately
 	if(evt.isAddedPath()){
 	    Basket.clearSelection();
 	    addToBasketButton.setText("+");
+	    fileName.setEnabled(true);
+	    fileName.setText(getFileNameWithoutExtension(evt.getPath()));//update the filename textbox
+	    imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
 	}
-	fileName.setText(getFileNameWithoutExtension(evt.getPath()));
-	imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
+	
 	
     }//GEN-LAST:event_MainFileListValueChanged
   
-  
+//when user interacts with basket tree
     private void BasketValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_BasketValueChanged
-        
-	
+	//ensure that the two trees are accessed separately
 	if(evt.isAddedPath()){
 	    MainFileList.clearSelection();
 	    addToBasketButton.setText("-");
+	    fileName.setText("");
+	    fileName.setEnabled(false);//ensure that the file cannot be renamed while basket is selected
+	    imageHandler.handler(treePathCombiner(evt.getPath(),0), MainImage);
 	}
-
+	
     }//GEN-LAST:event_BasketValueChanged
 	
 
     
 /////////////////////////BASKET MODIFICATION BUTTONS/////////////////////////////////////////
     
-	
+//when user clicks apply button to rename a file	
     private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyButtonActionPerformed
-
-	if(!"null".equals(MainFileList.getSelectionPath().toString())){
+	
+	if(!"null".equals(MainFileList.getSelectionPath().toString())){//check that user selected a file
+	    //get the selected file as an instance of the file class
 	    File originalFile = new File(treePathCombiner(MainFileList.getSelectionPath(),0));
 	    
 	    TreePath oldPath = MainFileList.getSelectionPath();
 	    String newFileName = treePathCombiner(MainFileList.getSelectionPath(),1)
 		    +"\\";
 	    File renamedFile = new File(newFileName+fileName.getText()+"."+FilenameUtils
-		    .getExtension(originalFile.toString()));
+		    .getExtension(originalFile.toString())); //new file name
 	    boolean flag = originalFile.renameTo(renamedFile);
-	    if (flag == true) {
-		DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel();
+	    if (flag == true) {//check that if file is renamed successfully
+		//update filename and properties on the jtree
+		DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel(); 
 		DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList.getSelectionPath().getPath()
 			[MainFileList.getSelectionPath().getPath().length-1];
 		FileClass child = (FileClass)childNode.getUserObject();
@@ -394,9 +414,10 @@ public class MainGUI extends JFrame {
 		model.nodeChanged(childNode);
 		MainFileList.setModel(model);
 		MainFileList.setSelectionPath(oldPath);
-	    }else{
+	    }else{//if renaming is not successful
 		int approve = JOptionPane.showConfirmDialog(MainGUI.getWindows()[0],"Error! Name already exists. "
 			+ "Would you like to rename it?");
+		//give users the option to choose another name
 		if(JOptionPane.YES_OPTION==approve){
 			boolean successRename = false;
 			while(!successRename){
@@ -425,49 +446,43 @@ public class MainGUI extends JFrame {
 	}
     }//GEN-LAST:event_ApplyButtonActionPerformed
 
+//trigger event when move button is pressed
     private void MoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveButtonActionPerformed
-        
-	if (moveFileChooser.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION){
-	    if(MainFileList.getLastSelectedPathComponent()!=null){
+	if (moveFileChooser.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION){//check if user selected destination folder
+	    if(MainFileList.getLastSelectedPathComponent()!=null){//check that file is selected in the tree
+		//check that filename does not exist in destination folder
 		if(!(new File(moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+MainFileList.getLastSelectedPathComponent()).isFile()) && (new File(getLastPathComponentObject().getAbsPath())).isFile()){
-
 		    try {
+			//move file
 			getLastPathComponentObject().moveFile(moveFileChooser.getSelectedFile().getAbsolutePath());
 		    } catch (IOException ex) {
 			Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 		    }
 		}else if(!(new File(moveFileChooser.getSelectedFile().getAbsolutePath()+"\\"+MainFileList.getLastSelectedPathComponent()).isDirectory())){
 		    try {
+			//move folder
 			getLastPathComponentObject().moveFolder(moveFileChooser.getSelectedFile().getAbsolutePath());
 		    } catch (IOException ex) {
 			Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 		    }
 		}
 	    }
-	    
-	    
-	    
-	    //System.out.println(moveFileChooser.getSelectedFile());
 	}
-	
     }//GEN-LAST:event_MoveButtonActionPerformed
 
-
+//when user clicks add to basket (+/-) button
     private void addToBasketButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToBasketButtonActionPerformed
-        if(!MainFileList.isSelectionEmpty()){
-	    
+        //check whether basket or main file list is selected
+	if(!MainFileList.isSelectionEmpty()){
 	    try {
-		BasketListManager.addToBasket();
-		//setInBasket((DefaultMutableTreeNode)MainFileList.getLastSelectedPathComponent());
-		
-		//getLastPathComponentObject().setInBasket();
+		BasketListManager.addToBasket();//call method from basket list manager
 	    } catch (IOException ex) {
 		Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
 	    }
 	    
 	    
 	}else if(!Basket.isSelectionEmpty()){
-	    BasketListManager.removeFromBasket();
+	    BasketListManager.removeFromBasket(); //call method from basket list manager
 	}
 	((DefaultTreeModel)Basket.getModel()).reload();
 	
@@ -480,10 +495,12 @@ public class MainGUI extends JFrame {
     
     
     
-    
+//when move basket button is pressed    
     private void MoveBasketButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveBasketButtonActionPerformed
-        if (MainGUI.moveFileChooser.showDialog(MainGUI.getWindows()[0], "Select") == JFileChooser.APPROVE_OPTION){
+        //check that user selects a destination folder
+	if (MainGUI.moveFileChooser.showDialog(MainGUI.getWindows()[0], "Select") == JFileChooser.APPROVE_OPTION){
 	    try {
+		//call basket list manager to move files
 		BasketListManager.moveFiles(moveFileChooser.getSelectedFile(), ((DefaultMutableTreeNode)MainGUI.Basket.getModel().getRoot()));
 	    } catch (IOException ex) {
 		Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -502,25 +519,32 @@ public class MainGUI extends JFrame {
     
     
 /////////////////////////MEDIA CONTROLLER STUFF/////////////////////////////////////////
-	
+
+    
+//when pause/play button is pressed
 	private void pausePlayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausePlayButtonActionPerformed
-        ImageHandling.mediaPlayerComponent.mediaPlayer().controls().pause();
+        ImageHandling.mediaPlayerComponent.mediaPlayer().controls().pause(); //call imagehandling class to pause video
 	
 	
     }//GEN-LAST:event_pausePlayButtonActionPerformed
 
+//when user lets go of the video slider
     private void videoSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_videoSliderMouseReleased
-        ImageHandling.changeTime(videoSlider.getValue());
-	ImageHandling.pausePlay();
+        ImageHandling.changeTime(videoSlider.getValue()); //change the time to match user selection
+	ImageHandling.pausePlay();//resume video
     }//GEN-LAST:event_videoSliderMouseReleased
 
+//when user moves video slider
     private void videoSliderMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_videoSliderMousePressed
-        ImageHandling.pausePlay();
+        ImageHandling.pausePlay();//pause video temporarily
     }//GEN-LAST:event_videoSliderMousePressed
 
+    
+//when video slider changes state    
     private void videoSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_videoSliderStateChanged
        if(!ImageHandling.isPlaying()){
-	   long newLength = videoSlider.getValue();
+	   long newLength = videoSlider.getValue();//update the video time
+	   //format to HH:MM:SS
 	   String formattedLength = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(newLength),
 		    TimeUnit.MILLISECONDS.toMinutes(newLength) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(newLength)),
 		    TimeUnit.MILLISECONDS.toSeconds(newLength) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(newLength)));
@@ -529,17 +553,32 @@ public class MainGUI extends JFrame {
 	    
        }
     }//GEN-LAST:event_videoSliderStateChanged
+
+//when clear basket button is clicked
+    private void clearBasketButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearBasketButtonActionPerformed
+        
+	//check if user agrees to confirmation message
+	if(JOptionPane.showConfirmDialog(this, "Are you sure you want to clear all elements in the basket?")==JOptionPane.YES_OPTION){
+	    DefaultTreeModel model =(((DefaultTreeModel)Basket.getModel()));
+	    ((DefaultMutableTreeNode)model.getRoot()).removeAllChildren();//remove all elements
+	    model.reload();
+	    Basket.setModel(model);
+	}
+	
+	
+    }//GEN-LAST:event_clearBasketButtonActionPerformed
 	
 	
 	
 	
 /////////////////////////CUSTOM FUNCTIONS/////////////////////////////////////////	
-	
+
+    //get file properties of currently selected file
     public FileClass getLastPathComponentObject(){
 	return ((FileClass)((DefaultMutableTreeNode)MainFileList.getLastSelectedPathComponent()).getUserObject());
     }
     
-    
+    //convert treepath into string and remove extra slashes if wanted
     private String treePathCombiner(TreePath treePath, int endIndexRemover){
 	StringBuilder finalPath = new StringBuilder();
 	finalPath.append(currentDirectory);
@@ -555,6 +594,7 @@ public class MainGUI extends JFrame {
 	return finalPath.toString();
     }
     
+    //get file name without file type extension
     private String getFileNameWithoutExtension(TreePath treePath){
 	String filename=treePath.getPathComponent(treePath.getPathCount()-1).toString();
 	filename = filename.replaceAll("."+FilenameUtils.getExtension(filename), "");
@@ -577,12 +617,15 @@ public class MainGUI extends JFrame {
      */
     public static void main(String args[]) {
         try {
+	    //set the look and feel of the class
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
+	    
+	//exception handling
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -595,7 +638,7 @@ public class MainGUI extends JFrame {
 
         /* Create and display the GUI */
 	
-	
+	//initiate the constructor of the main gui and display
         java.awt.EventQueue.invokeLater(new Runnable(){
 	    public void run(){
 		MainGUI mainGUI = new MainGUI();
@@ -620,6 +663,7 @@ public class MainGUI extends JFrame {
     private javax.swing.JButton MoveButton;
     private java.awt.Label VisibleFilesTitle;
     public static javax.swing.JButton addToBasketButton;
+    private javax.swing.JButton clearBasketButton;
     public static javax.swing.JLabel currentTime;
     private javax.swing.JTextField fileName;
     public static javax.swing.JFileChooser moveFileChooser;
