@@ -51,8 +51,7 @@ public class BasketListManager{
 	treeInserter.addFolderToBasket(MainGUI.Basket,selectedFile.getAbsPath() , new File(selectedFile.getAbsPath()));
 	
 	((DefaultMutableTreeNode)((DefaultMutableTreeNode)BasketTreeModel.getRoot()).getLastChild())
-		.setUserObject((FileClass)(((DefaultMutableTreeNode)MainGUI
-			.MainFileList.getLastSelectedPathComponent()).getUserObject()));
+		.setUserObject((FileClass)(((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject()));
 	MainGUI.Basket.setModel(BasketTreeModel);
     }
     
@@ -109,8 +108,7 @@ public class BasketListManager{
 	    //if there is a file with the same name in the destination folder
 	    }else{
 		//give option to rename
-		int approve = JOptionPane.showConfirmDialog(MainGUI.getWindows()[0],"Error! "
-			+ destination.getName()
+		int approve = JOptionPane.showConfirmDialog(MainGUI.getWindows()[0],"Error! "+ destination.getName()
 			+"\\"+root.getChildAt(path)+" already exists. Would you like to rename it?");
 		if(JOptionPane.YES_OPTION==approve){
 		    boolean successRename = false;

@@ -105,6 +105,7 @@ public class ImageHandling{
 		//runs when the video time is updated
 		@Override
 		public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
+		    //time formatting to "HH:MM:SS"
 		    MainGUI.videoSlider.setValue((int)newTime);
 		    String formattedLength = String.format("%02d:%02d:%02d",
 			    TimeUnit.MILLISECONDS.toHours(newTime),
@@ -253,7 +254,7 @@ public class ImageHandling{
 	mediaPlayerComponent.mediaPlayer().media().play(""); 
     }
     
-    //gateway function to view images/videos
+    //gateway method to view images/videos
     public void handler(String src, JLabel MainImage){
 	try {
 	    setImage(src, MainImage);

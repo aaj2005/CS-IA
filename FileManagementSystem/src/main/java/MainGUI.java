@@ -316,6 +316,7 @@ public class MainGUI extends JFrame {
     
     
     public MainGUI() {
+	//initialize the tree selection models and gui dimensions and layout
 	setSize(new Dimension(1920,1080));
 	initComponents();
 	setLayout(new BorderLayout());
@@ -391,7 +392,7 @@ public class MainGUI extends JFrame {
     
 /////////////////////////BASKET MODIFICATION BUTTONS/////////////////////////////////////////
     
-//when user clicks apply button to rename a file	
+    //when user clicks apply button to rename a file	
     private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyButtonActionPerformed
 	
 	if(!"null".equals(MainFileList.getSelectionPath().toString())){//check that user selected a file
@@ -429,6 +430,7 @@ public class MainGUI extends JFrame {
 				return;
 			    }
 			    if(successRename){
+				//update the file list
 				DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel();
 				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList
 					.getSelectionPath().getPath()
