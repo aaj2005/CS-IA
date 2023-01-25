@@ -42,6 +42,7 @@ public class BasketListManager{
 	    nextFile = (FileClass)((DefaultMutableTreeNode)e.nextElement()).getUserObject();
 	    //if the file trying to be added to the list already exists in the basket exit
 	    if(nextFile.getAbsPath().equals(currentFile.getAbsPath())){
+		JOptionPane.showMessageDialog(MainGUI.getWindows()[0], "Selected item is already in Basket!");
 		return;
 	    }
 	}

@@ -71,6 +71,8 @@ public class ImageHandling{
 	    mediaPlayerComponent.mediaPlayer().media().play(src);
 	    MainGUI.pausePlayButton.setIcon(new ImageIcon(getClass()
 		    .getResource("/download-icon-pause+icon-1320196062769593213_16.png")));
+	    
+	    
 	    mediaPlayerComponent.mediaPlayer().events()
 		    .addMediaPlayerEventListener(new MediaPlayerEventListener(){
 		//interface implementation for all video properties 

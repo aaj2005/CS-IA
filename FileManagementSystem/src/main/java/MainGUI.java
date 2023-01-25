@@ -306,12 +306,13 @@ public class MainGUI extends JFrame {
     
     
     ImageHandling imageHandler = new ImageHandling();
+    
     public static final ArrayList<String> videoTypeList = new ArrayList<>(Arrays.asList("webm","mkv","flv","vob","ogv","ogg"
 	    ,"drc","gif","mng","avi","mov","qt","wmv","amv","mp4","m4p","m4v","mpg","mpeg","m4v"));
     public static final ArrayList<String> imageTypeList = new ArrayList<>(Arrays.asList("jpg","jpeg","jpe","jif","jfif","jfi"
 	    ,"png","gif","webp","tiff","tif","arw","jp2","j2k","jpf","jpx","jpm"));
     
-    public static final ArrayList<String> zipTypeList = new ArrayList<>(Arrays.asList("7z","arj","deb","pkg","rar","rpm","gz","z","zip"));
+    
     public static File currentDirectory;
     
     
@@ -420,30 +421,29 @@ public class MainGUI extends JFrame {
 			+ "Would you like to rename it?");
 		//give users the option to choose another name
 		if(JOptionPane.YES_OPTION==approve){
-			boolean successRename = false;
-			while(!successRename){
-			    renamedFile = new File(newFileName + JOptionPane.showInputDialog("File Name:")
-				    + "."+FilenameUtils
-				    .getExtension(originalFile.toString()));
-			    successRename = originalFile.renameTo(renamedFile);
-			    if(renamedFile==null){
-				return;
-			    }
-			    if(successRename){
-				//update the file list
-				DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel();
-				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList
-					.getSelectionPath().getPath()
-				    [MainFileList.getSelectionPath().getPath().length-1];
-				FileClass child = (FileClass)childNode.getUserObject();
-				child.setFileNameDirectory(renamedFile.getName(), renamedFile.getAbsolutePath());
-				model.nodeChanged(childNode);
-				MainFileList.setModel(model);
-				MainFileList.setSelectionPath(oldPath);
-			    }
+		    boolean successRename = false;
+		    while(!successRename){
+			renamedFile = new File(newFileName + JOptionPane.showInputDialog("File Name:")
+				+ "."+FilenameUtils
+				.getExtension(originalFile.toString()));
+			successRename = originalFile.renameTo(renamedFile);
+			if(renamedFile==null){
+			    return;
 			}
-			
+			if(successRename){
+			    //update the file list
+			    DefaultTreeModel model = (DefaultTreeModel)MainFileList.getModel();
+			    DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)MainFileList
+				    .getSelectionPath().getPath()
+				[MainFileList.getSelectionPath().getPath().length-1];
+			    FileClass child = (FileClass)childNode.getUserObject();
+			    child.setFileNameDirectory(renamedFile.getName(), renamedFile.getAbsolutePath());
+			    model.nodeChanged(childNode);
+			    MainFileList.setModel(model);
+			    MainFileList.setSelectionPath(oldPath);
+			}
 		    }
+		}
 	    } 
 	}
     }//GEN-LAST:event_ApplyButtonActionPerformed
