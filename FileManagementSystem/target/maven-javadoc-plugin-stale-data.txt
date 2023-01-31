@@ -1,0 +1,73 @@
+@options
+@argfile
+-classpath
+'C:/Users/alial/.m2/repository/commons-io/commons-io/2.7/commons-io-2.7.jar;C:/Users/alial/.m2/repository/uk/co/caprica/vlcj/4.7.1/vlcj-4.7.1.jar;C:/Users/alial/.m2/repository/uk/co/caprica/vlcj-natives/4.1.0/vlcj-natives-4.1.0.jar;C:/Users/alial/.m2/repository/net/java/dev/jna/jna/5.2.0/jna-5.2.0.jar;C:/Users/alial/.m2/repository/net/java/dev/jna/jna-platform/5.2.0/jna-platform-5.2.0.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'1.8'
+-sourcepath
+'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2023. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/target/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'FileManagementSystem 1.0-SNAPSHOT API'
+-linkoffline
+'https://docs.oracle.com/javase/8/docs/api' 'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'FileManagementSystem 1.0-SNAPSHOT API'
+'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/src/main/java/BasketListManager.java'
+'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/src/main/java/FileClass.java'
+'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/src/main/java/ImageHandling.java'
+'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/src/main/java/MainGUI.java'
+'C:/Users/alial/Desktop/Programs/Java/IA GUI/FileManagementSystem/src/main/java/TreeInsertionManager.java'
+C:\Users\alial\.m2\repository\commons-io\commons-io\2.7\commons-io-2.7.jar = 1650109347416
+C:\Users\alial\.m2\repository\uk\co\caprica\vlcj\4.7.1\vlcj-4.7.1.jar = 1641315974000
+C:\Users\alial\.m2\repository\uk\co\caprica\vlcj-natives\4.1.0\vlcj-natives-4.1.0.jar = 1655314362634
+C:\Users\alial\.m2\repository\net\java\dev\jna\jna\5.2.0\jna-5.2.0.jar = 1655315553405
+C:\Users\alial\.m2\repository\net\java\dev\jna\jna-platform\5.2.0\jna-platform-5.2.0.jar = 1655315553436
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\src\main\java\BasketListManager.java = 1675025812089
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\src\main\java\FileClass.java = 1674155764481
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\src\main\java\ImageHandling.java = 1674594837498
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\src\main\java\MainGUI.form = 1675024269234
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\src\main\java\MainGUI.java = 1675024269303
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\src\main\java\TreeInsertionManager.java = 1674148348431
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\src\main\java = 1674017115592
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\allclasses-index.html = 1675098604622
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\allclasses.html = 1675098604635
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\allpackages-index.html = 1675098604627
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\BasketListManager.html = 1675098604340
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\constant-values.html = 1675098604515
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\deprecated-list.html = 1675098604632
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\element-list = 1675098604496
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\FileClass.html = 1675098604367
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\help-doc.html = 1675098604642
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\ImageHandling.html = 1675098604385
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\index-all.html = 1675098604615
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\index.html = 1675098604638
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\MainGUI.html = 1675098604483
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\member-search-index.js = 1675098604610
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\member-search-index.zip = 1675098604612
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\overview-tree.html = 1675098604578
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\package-search-index.js = 1675098604599
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\package-search-index.zip = 1675098604604
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\package-summary.html = 1675098604503
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\package-tree.html = 1675098604511
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\package-use.html = 1675098604569
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\script.js = 1675098604650
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\search.js = 1675098604654
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\serialized-form.html = 1675098604527
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\stylesheet.css = 1675098604647
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\TreeInsertionManager.html = 1675098604493
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\type-search-index.js = 1675098604606
+C:\Users\alial\Desktop\Programs\Java\IA GUI\FileManagementSystem\target\apidocs\type-search-index.zip = 1675098604607

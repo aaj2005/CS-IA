@@ -46,14 +46,17 @@ public class BasketListManager{
 		return;
 	    }
 	}
+	
+	
 	//insert the file/directory to the basket
 	FileClass selectedFile = ((FileClass)((DefaultMutableTreeNode)MainGUI.MainFileList
 		.getLastSelectedPathComponent()).getUserObject());
-	treeInserter.addFolderToBasket(MainGUI.Basket,selectedFile.getAbsPath() , new File(selectedFile.getAbsPath()));
+	BasketTreeModel = treeInserter.addFolderToBasket(MainGUI.Basket,selectedFile.getAbsPath() , new File(selectedFile.getAbsPath()));
 	
 	((DefaultMutableTreeNode)((DefaultMutableTreeNode)BasketTreeModel.getRoot()).getLastChild())
 		.setUserObject((FileClass)(((DefaultMutableTreeNode)MainGUI.MainFileList.getLastSelectedPathComponent()).getUserObject()));
 	MainGUI.Basket.setModel(BasketTreeModel);
+	
     }
     
     public static void removeFromBasket(){
@@ -88,24 +91,31 @@ public class BasketListManager{
 	
     }
     
+    static int basketElement;
+    
     //move the basket to selected folder
-    public static void moveFiles(File destination, DefaultMutableTreeNode root) throws IOException{    
+    public static void moveFiles(File destination, DefaultMutableTreeNode root) throws IOException{
+	MainGUI.MainImage.removeAll();
+	ImageHandling.mediaPlayerComponent.mediaPlayer().controls().stop();
 	//loop through basket
 	for(int path=0; path<root.getChildCount();path++){
+	    
 	    File destinationFile = new File(destination.getAbsolutePath()+"\\"+root.getChildAt(path));
 	    FileClass fileProperties = (FileClass)
 		    (((DefaultMutableTreeNode)(root.getChildAt(path)))).getUserObject();
 	    File currentFile = new File((fileProperties.getAbsPath()));
 	    //if the item is a directory
+	    
 	    if(!(destinationFile.exists()) && (currentFile.exists())){
 		if(currentFile.isDirectory()){
 		    // create the folder and recurse through the files/directories inside
-		    destinationFile.mkdir();
+		    //destinationFile.mkdir();
 		    moveFiles(destinationFile,(DefaultMutableTreeNode)root.getChildAt(path));
 		}else{
 		    //move file
-		    fileProperties.moveFile(destination.getAbsolutePath());
+		    //fileProperties.moveFile(destination.getAbsolutePath());
 		}
+		
 	    //if there is a file with the same name in the destination folder
 	    }else{
 		//give option to rename
@@ -142,10 +152,7 @@ public class BasketListManager{
 	    }	   
 	}
 	//clear the basket
-	DefaultTreeModel model =(((DefaultTreeModel)MainGUI.Basket.getModel()));
-	((DefaultMutableTreeNode)model.getRoot()).removeAllChildren();
-	model.reload();
-	MainGUI.Basket.setModel(model);
+	
     }
     
     

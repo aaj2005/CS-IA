@@ -44,7 +44,7 @@ public class TreeInsertionManager{
     }
     
     //method called when folders are inserted into basket
-    public void addFolderToBasket(JTree FileTree, String Path,File selectedFile) throws IOException{
+    public DefaultTreeModel addFolderToBasket(JTree FileTree, String Path,File selectedFile) throws IOException{
 	//get tree model and root
 	treeModel = (DefaultTreeModel) FileTree.getModel();
 	DefaultMutableTreeNode upperRoot = ((DefaultMutableTreeNode)(treeModel.getRoot()));
@@ -74,6 +74,7 @@ public class TreeInsertionManager{
 	}    
 	treeModel.reload();
 	FileTree.setModel(treeModel);
+	return treeModel;
     }
     
     
