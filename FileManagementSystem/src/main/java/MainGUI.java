@@ -527,6 +527,7 @@ public class MainGUI extends JFrame {
 		BasketListManager.basketElement = 0;
 		//call basket list manager to move files
 		BasketListManager.moveFiles(moveFileChooser.getSelectedFile(), ((DefaultMutableTreeNode)MainGUI.Basket.getModel().getRoot()));
+		//clear the basket
 		DefaultTreeModel model =(((DefaultTreeModel)Basket.getModel()));
 		((DefaultMutableTreeNode)model.getRoot()).removeAllChildren();
 		model.reload();

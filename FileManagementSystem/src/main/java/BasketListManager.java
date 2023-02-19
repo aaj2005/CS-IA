@@ -109,11 +109,11 @@ public class BasketListManager{
 	    if(!(destinationFile.exists()) && (currentFile.exists())){
 		if(currentFile.isDirectory()){
 		    // create the folder and recurse through the files/directories inside
-		    //destinationFile.mkdir();
+		    destinationFile.mkdir();
 		    moveFiles(destinationFile,(DefaultMutableTreeNode)root.getChildAt(path));
 		}else{
 		    //move file
-		    //fileProperties.moveFile(destination.getAbsolutePath());
+		    fileProperties.moveFile(destination.getAbsolutePath());
 		}
 		
 	    //if there is a file with the same name in the destination folder
@@ -151,7 +151,6 @@ public class BasketListManager{
 		}   
 	    }	   
 	}
-	//clear the basket
 	
     }
     
